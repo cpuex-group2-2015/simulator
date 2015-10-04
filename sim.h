@@ -7,9 +7,9 @@
 #define GPR_LEN 32    /* Number of GPRs */
 #define FPR_LEN 32    /* Number of FPRs */
 
-#define IR_LEN 4      /* Length of instruction (byte) */
-
 #define OPCODE(ir) DOWNTO((ir), 31, 26)
+
+typedef uint32_t inst_t;
 
 typedef uint8_t  CR;  /* Condition Register */
 typedef uint64_t LR;  /* Link Register */
@@ -28,7 +28,7 @@ typedef struct cpu_t {
 } CPU;
 
 typedef struct ram_t {
-    char *m;
+    inst_t *m;
     unsigned int size;
 } RAM;
 #endif
