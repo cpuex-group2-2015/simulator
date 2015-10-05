@@ -3,9 +3,11 @@ LD = gcc
 CFLAGS = -Wall -MMD -MP
 LDFLAGS =
 TARGET = ./bin/sim
+SRCDIR = ./src
+BUILDDIR = ./build
 SRCS = $(wildcard *.c)
-OBJS = $(SRCS:.c=.o)
-DEPS = $(SRCS:.c=.d)
+OBJS = $(SRCS:%.c=$(BUILDDIR)/%.o)
+DEPS = $(SRCS:%.c=$(BUILDDIR)/%.d)
 
 TESTTXT = $(wildcard ./test/*.txt)
 TESTBIN = $(TESTTXT:.txt=.bin)
@@ -17,7 +19,7 @@ all: $(TARGET) $(TESTBIN)
 $(TARGET): $(OBJS)
 	$(LD) $(LDFLAGS) -o $@ $^
 
-%.o: %.c
+$(BUILDDIR)/%.o: %.c
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 ./test/%.bin: ./test/%.txt
