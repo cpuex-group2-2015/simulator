@@ -1,6 +1,6 @@
 *.o
 *.d
 *.swp
-bin/*.o
-bin/*.d
+build/*.o
+build/*.d
 test/*.bin
