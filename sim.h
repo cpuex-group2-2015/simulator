@@ -31,6 +31,17 @@ typedef struct ram_t {
     inst_t *m;
     unsigned int size;
 } RAM;
+
+typedef struct option_t {
+    unsigned int entry_point;
+    int interactive;
+} OPTION;
+
+typedef struct prompt_t {
+    char command;
+    int target;
+} PROMPT;
+
 #endif
 
-void sim_run(CPU *cpu, RAM *ram);
+void sim_run(CPU *cpu, RAM *ram, OPTION *option);

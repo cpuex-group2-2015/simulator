@@ -12,16 +12,25 @@ size_t load_instructions_from_file(RAM *ram, char *filename, size_t max_size);
 
 int main(int argc, char *argv[]) {
     int c;
-    const char *optstring = "h";
+    const char *optstring = "hi";
     char *filename;
+    OPTION option;
+
+    option.entry_point = 0;
+    option.interactive = 0;
 
     __file = argv[0];
 
     while ((c = getopt(argc, argv, optstring)) != -1) {
         switch (c) {
             case 'h':
-                printf("Usage: sim [options] file\n");
+                printf("usage: sim [options] file\n"
+                       "options:\n"
+                       "-i    interactive mode");
                 return 0;
+                break;
+            case 'i':
+                option.interactive = 1;
                 break;
             case '?':
                 return -1;
@@ -47,7 +56,7 @@ int main(int argc, char *argv[]) {
 
     if (ir_space_size > 0) {
         printf("loaded %lu byte\n", ir_space_size);
-        sim_run(&cpu, &ram);
+        sim_run(&cpu, &ram, &option);
     }
 
     free(ram.m);
