@@ -73,7 +73,7 @@ size_t load_instructions_from_file(RAM *ram, char *filename, size_t max_size) {
     }
 
     size = st.st_size;
-    if (size > max_size) {
+    if (size > max_size - 4) {
         fprintf(stderr, "%s: too big file (%lu byte > %d byte = ram)\n", __file, st.st_size, RAM_SIZE);
         return 0;
     }
@@ -86,6 +86,9 @@ size_t load_instructions_from_file(RAM *ram, char *filename, size_t max_size) {
     }
 
     fread(ram->m, 1, size, fp);
+    memset(ram->m + size, 0xff, 4);
+
+    ram->m[size] = 0xffffffff; /* Guard */
 
     fclose(fp);
 

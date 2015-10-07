@@ -9,8 +9,6 @@
 
 #define OPCODE(ir) DOWNTO((ir), 31, 26)
 
-typedef uint32_t inst_t;
-
 typedef uint8_t  CR;  /* Condition Register */
 typedef uint64_t LR;  /* Link Register */
 typedef uint32_t CTR; /* Count Register */
@@ -28,7 +26,7 @@ typedef struct cpu_t {
 } CPU;
 
 typedef struct ram_t {
-    inst_t *m;
+    uint8_t *m;
     unsigned int size;
 } RAM;
 

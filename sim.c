@@ -3,6 +3,11 @@
 #include <stdlib.h>
 #include "sim.h"
 
+void load_instruction(unsigned int *ir, RAM *ram, unsigned int pc) {
+    memcpy(ir, ram->m + pc, sizeof(unsigned int));
+    *ir = __builtin_bswap32(*ir);
+}
+
 void initialize_cpu(CPU *cpu, RAM *ram, OPTION *option) {
     cpu->cr = 0;
     cpu->lr = 0;
@@ -10,7 +15,7 @@ void initialize_cpu(CPU *cpu, RAM *ram, OPTION *option) {
     memset(cpu->gpr, 0, sizeof(GPR) * GPR_LEN);
     memset(cpu->fpr, 0, sizeof(GPR) * GPR_LEN);
     cpu->pc  = option->entry_point;
-    cpu->nir = __builtin_bswap32(ram->m[option->entry_point]);
+    load_instruction(&(cpu->nir), ram, cpu->pc);
 }
 
 
@@ -39,6 +44,10 @@ int tick(CPU *cpu, RAM *ram, OPTION *option) {
     f  = ir & 1;
 
     switch (opcode) {
+        /* addi */
+        case 14:
+            cpu->gpr[rx] = (int16_t) v + (ry == 0 ? 0 : cpu->gpr[ry]);
+            break;
         /* lwz */
         case 32:
             ea = (ry == 0 ? 0 : cpu->gpr[ry]) + (int16_t) v;
@@ -53,8 +62,8 @@ int tick(CPU *cpu, RAM *ram, OPTION *option) {
             break;
     }
 
-    cpu->pc = cpu->pc + 1;
-    cpu->nir = __builtin_bswap32(ram->m[cpu->pc]);
+    cpu->pc = cpu->pc + 4;
+    load_instruction(&(cpu->nir), ram, cpu->pc);
 
     return 1;
 }
@@ -100,7 +109,8 @@ int prompt(char *s, PROMPT *p) {
 
 void sim_run(CPU *cpu, RAM *ram, OPTION *option) {
     unsigned int c = 0;
-    int mode = option->interactive ? MODE_INTERACTIVE : MODE_STEP;
+    int mode = option->interactive ? MODE_INTERACTIVE : MODE_RUN;
+    char prompt_str[15];
     PROMPT p;
 
     p.command = '\n';
@@ -108,7 +118,8 @@ void sim_run(CPU *cpu, RAM *ram, OPTION *option) {
     initialize_cpu(cpu, ram, option);
     int res = 0;
     for (;;) {
-        while (mode == MODE_INTERACTIVE && (res = prompt("> ", &p))) {
+        sprintf(prompt_str, "0x%06x> ", cpu->pc);
+        while (mode == MODE_INTERACTIVE && (res = prompt(prompt_str, &p))) {
             switch (p.command) {
                 /* print*/
                 case 'p':
@@ -141,9 +152,9 @@ void sim_run(CPU *cpu, RAM *ram, OPTION *option) {
     }
 
     if (mode == MODE_QUIT) {
-        printf("simulation aborted\n");
+        printf("simulation aborted at %06x\n", cpu->pc);
     } else {
-        printf("simulation completed\n");
+        printf("simulation completed at %06x\n", cpu->pc);
     }
     printf("%u instructions executed\n", c);
 }
