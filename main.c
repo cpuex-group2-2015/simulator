@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include "sim.h"
@@ -26,7 +27,7 @@ int main(int argc, char *argv[]) {
             case 'h':
                 printf("usage: sim [options] file\n"
                        "options:\n"
-                       "-i    interactive mode");
+                       "-i    interactive mode\n");
                 return 0;
                 break;
             case 'i':
@@ -88,7 +89,7 @@ size_t load_instructions_from_file(RAM *ram, char *filename, size_t max_size) {
     fread(ram->m, 1, size, fp);
     memset(ram->m + size, 0xff, 4);
 
-    ram->m[size] = 0xffffffff; /* Guard */
+    /* ram->m[size] = 0xffffffff; *//* Guard */
 
     fclose(fp);
 

@@ -35,11 +35,6 @@ typedef struct option_t {
     int interactive;
 } OPTION;
 
-typedef struct prompt_t {
-    char command;
-    int target;
-} PROMPT;
-
 #endif
 
 void sim_run(CPU *cpu, RAM *ram, OPTION *option);
