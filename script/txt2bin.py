@@ -15,7 +15,6 @@ if __name__ == '__main__':
     re_space   = re.compile(r"\s")
     for line in open(sys.argv[1]):
         s = re_space.sub("", re_comment.sub("", line))
-        print(s)
         a = ([int(b, 2) for b in chunks(s, 8)])
         ba = bytearray(a)
         dst.write(ba)
