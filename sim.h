@@ -1,6 +1,7 @@
 #ifndef __CPU_H
 #define __CPU_H
 
+#include <stdio.h>
 #include <stdint.h>
 #include "util.h"
 
@@ -10,9 +11,9 @@
 #define OPCODE(ir) DOWNTO((ir), 31, 26)
 
 typedef uint8_t  CR;  /* Condition Register */
-typedef uint64_t LR;  /* Link Register */
+typedef uint32_t LR;  /* Link Register */
 typedef uint32_t CTR; /* Count Register */
-typedef uint32_t GPR; /* General Purpose Register */
+typedef int32_t GPR; /* General Purpose Register */
 typedef uint32_t FPR; /* Floating-Point Register */
 
 typedef struct cpu_t {
@@ -33,6 +34,7 @@ typedef struct ram_t {
 typedef struct option_t {
     unsigned int entry_point;
     int interactive;
+    FILE *fp;
 } OPTION;
 
 #endif

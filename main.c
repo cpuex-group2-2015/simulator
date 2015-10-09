@@ -19,6 +19,7 @@ int main(int argc, char *argv[]) {
 
     option.entry_point = 0;
     option.interactive = 0;
+    option.fp = stdout;
 
     __file = argv[0];
 
