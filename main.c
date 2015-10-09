@@ -5,11 +5,12 @@
 #include <unistd.h>
 #include "sim.h"
 
-#define RAM_SIZE 4194304
+#define BROM_SIZE 4194304
+#define SRAM_SIZE   4194304
 
 static char *__file;
 
-size_t load_instructions_from_file(RAM *ram, char *filename, size_t max_size);
+size_t load_instructions_from_file(MEMORY *mem, char *filename, size_t max_size);
 
 int main(int argc, char *argv[]) {
     int c;
@@ -49,23 +50,26 @@ int main(int argc, char *argv[]) {
     }
 
     CPU cpu;
-    RAM ram;
+    MEMORY mem;
     size_t ir_space_size;
 
-    ram.m = malloc(RAM_SIZE);
-    ram.size = RAM_SIZE;
-    ir_space_size = load_instructions_from_file(&ram, filename, RAM_SIZE);
+    mem.brom = malloc(BROM_SIZE);
+    mem.brom_size = BROM_SIZE;
+    mem.sram = malloc(SRAM_SIZE);
+    mem.sram_size = SRAM_SIZE;
+    ir_space_size = load_instructions_from_file(&mem, filename, BROM_SIZE);
 
     if (ir_space_size > 0) {
         printf("loaded %lu byte\n", ir_space_size);
-        sim_run(&cpu, &ram, &option);
+        sim_run(&cpu, &mem, &option);
     }
 
-    free(ram.m);
+    free(mem.brom);
+    free(mem.sram);
     return 0;
 }
 
-size_t load_instructions_from_file(RAM *ram, char *filename, size_t max_size) {
+size_t load_instructions_from_file(MEMORY *mem, char *filename, size_t max_size) {
     size_t size;
     struct stat st;
 
@@ -76,7 +80,7 @@ size_t load_instructions_from_file(RAM *ram, char *filename, size_t max_size) {
 
     size = st.st_size;
     if (size > max_size - 4) {
-        fprintf(stderr, "%s: too big file (%lu byte > %d byte = ram)\n", __file, st.st_size, RAM_SIZE);
+        fprintf(stderr, "%s: too big file (%lu byte > %d byte = ram)\n", __file, st.st_size, max_size);
         return 0;
     }
 
@@ -87,8 +91,8 @@ size_t load_instructions_from_file(RAM *ram, char *filename, size_t max_size) {
         return 0;
     }
 
-    fread(ram->m, 1, size, fp);
-    memset(ram->m + size, 0xff, 4);
+    fread(mem->brom, 1, size, fp);
+    memset(mem->brom + size, 0xff, 4);
 
     /* ram->m[size] = 0xffffffff; *//* Guard */
 

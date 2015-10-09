@@ -26,10 +26,12 @@ typedef struct cpu_t {
     unsigned int nir;
 } CPU;
 
-typedef struct ram_t {
-    uint8_t *m;
-    unsigned int size;
-} RAM;
+typedef struct memory_t {
+    uint8_t *brom;
+    uint8_t *sram;
+    unsigned int brom_size;
+    unsigned int sram_size;
+} MEMORY;
 
 typedef struct option_t {
     unsigned int entry_point;
@@ -39,4 +41,4 @@ typedef struct option_t {
 
 #endif
 
-void sim_run(CPU *cpu, RAM *ram, OPTION *option);
+void sim_run(CPU *cpu, MEMORY *mem, OPTION *option);

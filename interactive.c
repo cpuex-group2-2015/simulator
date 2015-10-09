@@ -49,7 +49,7 @@ void interactive_print(CPU *cpu, int t) {
     }
 }
 
-int interactive_prompt(CPU *cpu, RAM *ram, int *mode) {
+int interactive_prompt(CPU *cpu, MEMORY *m, int *mode) {
     int cont = 1;
     int nextmode = *mode;
     int res;

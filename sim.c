@@ -4,19 +4,19 @@
 #include "sim.h"
 #include "interactive.h"
 
-void load_instruction(unsigned int *ir, RAM *ram, unsigned int pc) {
-    memcpy(ir, ram->m + pc, sizeof(unsigned int));
+void load_instruction(unsigned int *ir, MEMORY *m, unsigned int pc) {
+    memcpy(ir, m->brom + pc, sizeof(unsigned int));
     *ir = __builtin_bswap32(*ir);
 }
 
-void initialize_cpu(CPU *cpu, RAM *ram, OPTION *option) {
+void initialize_cpu(CPU *cpu, MEMORY *m, OPTION *option) {
     cpu->cr = 0;
     cpu->lr = 0;
     cpu->ctr = 0;
     memset(cpu->gpr, 0, sizeof(GPR) * GPR_LEN);
     memset(cpu->fpr, 0, sizeof(GPR) * GPR_LEN);
     cpu->pc  = option->entry_point;
-    load_instruction(&(cpu->nir), ram, cpu->pc);
+    load_instruction(&(cpu->nir), m, cpu->pc);
 }
 
 void simulate_io(int io, GPR *r, FILE *fp) {
@@ -24,7 +24,7 @@ void simulate_io(int io, GPR *r, FILE *fp) {
     if (io == 0) { /* send */
         fprintf(fp, "%c", (char) DOWNTO(*r, 7, 0));
     } else { /* read */
-        printf("\nrecv > ");
+        printf("\nrecv> ");
         if (fgets(buf, 63, stdin) == NULL) {
             *r = 0;
         } else {
@@ -33,7 +33,15 @@ void simulate_io(int io, GPR *r, FILE *fp) {
     }
 }
 
-int tick(CPU *cpu, RAM *ram, OPTION *option) {
+void load_from_sram(void *reg, MEMORY *m, unsigned int addr, size_t size) {
+    memcpy(reg, m->sram + addr, size);
+}
+
+void store_to_sram(void *reg, MEMORY *m, unsigned int addr, size_t size) {
+    memcpy(m->sram + addr, reg, size);
+}
+
+int tick(CPU *cpu, MEMORY *m, OPTION *option) {
     unsigned int ir, opcode, nia;
 
     ir = cpu->nir;
@@ -46,29 +54,26 @@ int tick(CPU *cpu, RAM *ram, OPTION *option) {
     }
 
     /* load and store */
-    int rx, ry, rz;
+    int rx, ry; /*, rz;*/
     int16_t si;
-    int opcd, f;
     int ea;
     GPR a, b;
 
     rx = DOWNTO(ir, 25, 21);
     ry = DOWNTO(ir, 20, 16);
-    rz = DOWNTO(ir, 15, 11);
+    /* rz = DOWNTO(ir, 15, 11); */
     si  = (int16_t) DOWNTO(ir, 15,  0);
-    opcd = DOWNTO(ir, 10, 1);
-    f  = ir & 1;
 
     switch (opcode) {
-        /* lwz */
+        /* ld */
         case 32:
             ea = (ry == 0 ? 0 : cpu->gpr[ry]) + si;
-            cpu->gpr[rx]= ram->m[ea];
+            load_from_sram(&(cpu->gpr[rx]), m, ea, 4);
             break;
-        /* stw */
+        /* st */
         case 36:
             ea = (ry == 0 ? 0 : cpu->gpr[ry]) + si;
-            ram->m[ea] = cpu->gpr[rx];
+            store_to_sram(&(cpu->gpr[rx]), m, ea, 4);
             break;
         /* addi */
         case 14:
@@ -79,7 +84,7 @@ int tick(CPU *cpu, RAM *ram, OPTION *option) {
             a = cpu->gpr[rx];
             cpu->cr |= a < si ? 0x8 : (a > si ? 0x4 : 0x2);
             break;
-        /* cmpw */
+        /* cmp */
         case 30:
             a = cpu->gpr[rx];
             b = cpu->gpr[ry];
@@ -101,22 +106,22 @@ int tick(CPU *cpu, RAM *ram, OPTION *option) {
     }
 
     cpu->pc = nia;
-    load_instruction(&(cpu->nir), ram, cpu->pc);
+    load_instruction(&(cpu->nir), m, cpu->pc);
 
     return 1;
 }
 
 
-void sim_run(CPU *cpu, RAM *ram, OPTION *option) {
+void sim_run(CPU *cpu, MEMORY *m, OPTION *option) {
     unsigned int c = 0;
     int mode = option->interactive ? MODE_INTERACTIVE : MODE_RUN;
-    initialize_cpu(cpu, ram, option);
+    initialize_cpu(cpu, m, option);
     for (;;) {
         c++;
         if (mode == MODE_INTERACTIVE) {
-            interactive_prompt(cpu, ram, &mode);
+            interactive_prompt(cpu, m, &mode);
         }
-        if (tick(cpu, ram, option) == 0) {
+        if (tick(cpu, m, option) == 0) {
             break;
         }
         if (mode == MODE_STEP) {

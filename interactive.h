@@ -13,5 +13,5 @@ typedef struct prompt_t {
     int target;
 } PROMPT;
 
-int interactive_prompt(CPU *cpu, RAM *ram, int *mode);
+int interactive_prompt(CPU *cpu, MEMORY *m, int *mode);
 #endif
