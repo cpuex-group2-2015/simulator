@@ -41,6 +41,41 @@ void store_to_sram(void *reg, MEMORY *m, unsigned int addr, size_t size) {
     memcpy(m->sram + addr, reg, size);
 }
 
+void extended_op(CPU *cpu, MEMORY *m, int rx, int ry, int rz, uint16_t xo) {
+    int ea;
+    switch (xo) {
+        /* ldx  */
+        case 23:
+            ea = (ry == 0 ? 0 : cpu->gpr[ry]) + cpu->gpr[rz];
+            load_from_sram(&(cpu->gpr[rx]), m, ea, sizeof(GPR));
+            break;
+        /* stx */
+        case 151:
+            ea = (ry == 0 ? 0 : cpu->gpr[ry]) + cpu->gpr[rz];
+            store_to_sram(&(cpu->gpr[rx]), m, ea, sizeof(GPR));
+            break;
+        /* add */
+        /* and */
+        case 28:
+            cpu->gpr[ry] = cpu->gpr[rx] & cpu->gpr[rz];
+            break;
+        /* or  */
+        case 444:
+            cpu->gpr[ry] = cpu->gpr[rx] & cpu->gpr[rz];
+            break;
+        /* mtlr */
+        case 467:
+            cpu->lr = cpu->gpr[rx];
+            break;
+        /* mflr */
+        case 339:
+            cpu->gpr[rx] = cpu->lr;
+            break;
+        default:
+            break;
+    }
+}
+
 int tick(CPU *cpu, MEMORY *m, OPTION *option) {
     unsigned int ir, opcode, nia;
 
@@ -54,26 +89,29 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
     }
 
     /* load and store */
-    int rx, ry; /*, rz;*/
+    int rx, ry, rz;
     int16_t si;
     int ea;
     GPR a, b;
 
     rx = DOWNTO(ir, 25, 21);
     ry = DOWNTO(ir, 20, 16);
-    /* rz = DOWNTO(ir, 15, 11); */
+    rz = DOWNTO(ir, 15, 11);
     si  = (int16_t) DOWNTO(ir, 15,  0);
 
     switch (opcode) {
+        case 31:
+            extended_op(cpu, m, rx, ry, rz, DOWNTO(ir, 10, 0));
+            break;
         /* ld */
         case 32:
             ea = (ry == 0 ? 0 : cpu->gpr[ry]) + si;
-            load_from_sram(&(cpu->gpr[rx]), m, ea, 4);
+            load_from_sram(&(cpu->gpr[rx]), m, ea, sizeof(GPR));
             break;
         /* st */
         case 36:
             ea = (ry == 0 ? 0 : cpu->gpr[ry]) + si;
-            store_to_sram(&(cpu->gpr[rx]), m, ea, 4);
+            store_to_sram(&(cpu->gpr[rx]), m, ea, sizeof(GPR));
             break;
         /* addi */
         case 14:
