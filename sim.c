@@ -188,9 +188,12 @@ void sim_run(CPU *cpu, MEMORY *m, OPTION *option) {
     }
 
     if (mode == MODE_QUIT) {
-        printf("simulation aborted at %06x\n", cpu->pc);
+        printf("*** simulation aborted at %06x ***\n", cpu->pc);
     } else {
-        printf("simulation completed at %06x\n", cpu->pc);
+        printf("*** simulation completed at %06x ***\n", cpu->pc);
+    }
+    if (option->interactive) {
+        interactive_prompt(cpu, m, &mode);
     }
     printf("%u instructions executed\n", c);
 }
