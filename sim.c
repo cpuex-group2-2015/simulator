@@ -100,6 +100,7 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
     si  = (int16_t) DOWNTO(ir, 15,  0);
 
     switch (opcode) {
+        /* extended_opcode */
         case 31:
             extended_op(cpu, m, rx, ry, rz, DOWNTO(ir, 10, 0));
             break;
@@ -131,13 +132,23 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
             b = cpu->gpr[ry];
             cpu->cr |= a < b  ? 0x8 : (a > b  ? 0x4 : 0x2);
             break;
-        /* branch */
+        /* b, bl */
         case 18:
             nia = cpu->pc + si;
-            if (DOWNTO(ir, 25, 25)) {
+            if (BIT(ir, 25)) {
                 cpu->lr = cpu->pc + 4;
             }
             break;
+        /* bc, bcl */
+        case 16:
+            if (BIT(cpu->cr, 3 - DOWNTO(ir, 23, 22)) == BIT(ir, 24)) {
+                nia = cpu->pc + si;
+            }
+            if (BIT(ir, 25)) {
+                cpu->lr = cpu->pc + 4;
+            }
+            break;
+
         /* send / recv */
         case 0:
             simulate_io(DOWNTO(ir, 20, 20), &(cpu->gpr[rx]), option->fp);

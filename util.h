@@ -4,4 +4,5 @@
 /* #define DOWNTO(l, n, m) (((l) & ((1UL << ((n) + 1)) - 1)) >> (m)) */
 
 #define DOWNTO(l, n, m) (((0xffffffffU >> (31 - (n))) & l) >> (m))
+#define BIT(l, n) DOWNTO(l, n, n)
 #endif
