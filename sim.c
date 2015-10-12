@@ -117,6 +117,9 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
         case 14:
             cpu->gpr[rx] = (int16_t) si + (ry == 0 ? 0 : cpu->gpr[ry]);
             break;
+        /* addis */
+        case 15:
+            cpu->gpr[rx] = ((int32_t) si << 16) + (ry == 0 ? 0 : cpu->gpr[ry]);
         /* cmpi */
         case 11:
             a = cpu->gpr[rx];
