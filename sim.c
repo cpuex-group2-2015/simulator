@@ -55,6 +55,8 @@ void extended_op(CPU *cpu, MEMORY *m, int rx, int ry, int rz, uint16_t xo) {
             store_to_sram(&(cpu->gpr[rx]), m, ea, sizeof(GPR));
             break;
         /* add */
+        case 266:
+            cpu->gpr[rx] = cpu->gpr[ry] + cpu->gpr[rz];
         /* and */
         case 28:
             cpu->gpr[ry] = cpu->gpr[rx] & cpu->gpr[rz];
@@ -149,7 +151,10 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
                 cpu->lr = cpu->pc + 4;
             }
             break;
-
+        /* blr */
+        case 19:
+            nia = cpu->lr;
+            break;
         /* send / recv */
         case 0:
             simulate_io(DOWNTO(ir, 20, 20), &(cpu->gpr[rx]), option->fp);
