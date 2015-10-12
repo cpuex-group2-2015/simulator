@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "interactive.h"
 #include "sim.h"
+#include "util.h"
 
 const char *help_string =
     "interactive mode commands\n"
@@ -9,6 +10,9 @@ const char *help_string =
     " r -- run\n"
     " q -- quit\n"
     " h -- help\n";
+
+#define PRINT_TARGET_IR -1
+#define PRINT_TARGET_CR -2
 
 int prompt(char *s, PROMPT *p) {
     char command[64], *arg;
@@ -33,15 +37,21 @@ int prompt(char *s, PROMPT *p) {
                 p->target = (arg[1] - '0');
             }
         } else if (arg[0] == 'i' && arg[1] == 'r') {
-            p->target = -1;
+            p->target = PRINT_TARGET_IR;
+        } else if (arg[0] == 'c' && arg[1] == 'r') {
+            p->target = PRINT_TARGET_CR;
         }
     }
     return 1;
 }
 
 void interactive_print(CPU *cpu, int t) {
-    if (t == -1) {
+    if (t == PRINT_TARGET_IR) {
         printf("(IR) = %08x\n", cpu->nir);
+    } else if (t == PRINT_TARGET_CR) {
+        printf("(CR) = %d%d%d%d\n",
+                BIT(cpu->cr, 3), BIT(cpu->cr, 2),
+                BIT(cpu->cr, 1), BIT(cpu->cr, 0));
     } else if (0 <= t && t <= 32) {
         printf("(R%d) = %d\n", t, cpu->gpr[t]);
     } else {
