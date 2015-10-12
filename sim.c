@@ -61,7 +61,7 @@ void extended_op(CPU *cpu, MEMORY *m, int rx, int ry, int rz, uint16_t xo) {
             break;
         /* or  */
         case 444:
-            cpu->gpr[ry] = cpu->gpr[rx] & cpu->gpr[rz];
+            cpu->gpr[ry] = cpu->gpr[rx] | cpu->gpr[rz];
             break;
         /* mtlr */
         case 467:
@@ -72,6 +72,7 @@ void extended_op(CPU *cpu, MEMORY *m, int rx, int ry, int rz, uint16_t xo) {
             cpu->gpr[rx] = cpu->lr;
             break;
         default:
+            printf("invalid extend-op: %d\n", xo);
             break;
     }
 }
@@ -102,7 +103,7 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
     switch (opcode) {
         /* extended_opcode */
         case 31:
-            extended_op(cpu, m, rx, ry, rz, DOWNTO(ir, 10, 0));
+            extended_op(cpu, m, rx, ry, rz, DOWNTO(ir, 10, 1));
             break;
         /* ld */
         case 32:
@@ -124,13 +125,13 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
         /* cmpi */
         case 11:
             a = cpu->gpr[rx];
-            cpu->cr |= a < si ? 0x8 : (a > si ? 0x4 : 0x2);
+            cpu->cr = a < si ? 0x8 : (a > si ? 0x4 : 0x2);
             break;
         /* cmp */
         case 30:
             a = cpu->gpr[rx];
             b = cpu->gpr[ry];
-            cpu->cr |= a < b  ? 0x8 : (a > b  ? 0x4 : 0x2);
+            cpu->cr = a < b  ? 0x8 : (a > b  ? 0x4 : 0x2);
             break;
         /* b, bl */
         case 18:
