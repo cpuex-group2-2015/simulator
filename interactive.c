@@ -13,6 +13,7 @@ const char *help_string =
 
 #define PRINT_TARGET_IR -1
 #define PRINT_TARGET_CR -2
+#define PRINT_TARGET_LR -3
 
 int prompt(char *s, PROMPT *p) {
     char command[64], *arg;
@@ -40,6 +41,8 @@ int prompt(char *s, PROMPT *p) {
             p->target = PRINT_TARGET_IR;
         } else if (arg[0] == 'c' && arg[1] == 'r') {
             p->target = PRINT_TARGET_CR;
+        } else if (arg[0] == 'l' && arg[1] == 'r') {
+            p->target = PRINT_TARGET_LR;
         }
     }
     return 1;
@@ -52,6 +55,8 @@ void interactive_print(CPU *cpu, int t) {
         printf("(CR) = %d%d%d%d\n",
                 BIT(cpu->cr, 3), BIT(cpu->cr, 2),
                 BIT(cpu->cr, 1), BIT(cpu->cr, 0));
+    } else if (t == PRINT_TARGET_LR) {
+        printf("(LR) = 0x%06x\n", cpu->lr);
     } else if (0 <= t && t <= 32) {
         printf("(R%d) = %d\n", t, cpu->gpr[t]);
     } else {
