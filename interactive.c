@@ -59,9 +59,8 @@ void interactive_print(CPU *cpu, int t) {
     }
 }
 
-int interactive_prompt(CPU *cpu, MEMORY *m, int *mode) {
+int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
     int cont = 1;
-    int nextmode = *mode;
     int res;
     char prompt_str[15];
     static PROMPT p;
@@ -73,13 +72,13 @@ int interactive_prompt(CPU *cpu, MEMORY *m, int *mode) {
                 interactive_print(cpu, p.target);
                 break;
             case 'r': /* run */
-                cont = 0; nextmode = MODE_RUN;
+                cont = 0; option->mode = MODE_RUN;
                 break;
             case 's': /* step */
-                cont = 0; nextmode = MODE_INTERACTIVE;
+                cont = 0;
                 break;
             case 'q': /* quit */
-                cont = 0; nextmode = MODE_QUIT;
+                cont = 0; option->mode = MODE_QUIT;
                 break;
             case 'h': /* help */
                 puts(help_string);
@@ -91,6 +90,5 @@ int interactive_prompt(CPU *cpu, MEMORY *m, int *mode) {
                 printf("invalid command: %c\n", p.c);
         }
     }
-    *mode = nextmode;
     return 0;
 }

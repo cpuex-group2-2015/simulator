@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
     OPTION option;
 
     option.entry_point = 0;
-    option.interactive = 0;
+    option.mode = MODE_RUN;
     option.fp = stdout;
 
     __file = argv[0];
@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
                 return 0;
                 break;
             case 'i':
-                option.interactive = 1;
+                option.mode = MODE_INTERACTIVE;
                 break;
             case '?':
                 return -1;

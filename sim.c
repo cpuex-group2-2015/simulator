@@ -172,28 +172,22 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
 
 void sim_run(CPU *cpu, MEMORY *m, OPTION *option) {
     unsigned int c = 0;
-    int mode = option->interactive ? MODE_INTERACTIVE : MODE_RUN;
     initialize_cpu(cpu, m, option);
     for (;;) {
         c++;
-        if (mode == MODE_INTERACTIVE) {
-            interactive_prompt(cpu, m, &mode);
+        if (option->mode == MODE_INTERACTIVE) {
+            interactive_prompt(cpu, m, option);
         }
         if (tick(cpu, m, option) == 0) {
             break;
         }
-        if (mode == MODE_STEP) {
-            mode = MODE_INTERACTIVE;
-        }
     }
 
-    if (mode == MODE_QUIT) {
+    if (option->mode == MODE_QUIT) {
         printf("*** simulation aborted at %06x ***\n", cpu->pc);
     } else {
         printf("*** simulation completed at %06x ***\n", cpu->pc);
     }
-    if (option->interactive) {
-        interactive_prompt(cpu, m, &mode);
-    }
+    interactive_prompt(cpu, m, option);
     printf("%u instructions executed\n", c);
 }

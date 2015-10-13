@@ -33,9 +33,14 @@ typedef struct memory_t {
     unsigned int sram_size;
 } MEMORY;
 
+#define MODE_INTERACTIVE 1
+#define MODE_STEP 2
+#define MODE_QUIT 3
+#define MODE_RUN 0
+
 typedef struct option_t {
     unsigned int entry_point;
-    int interactive;
+    int mode;
     FILE *fp;
 } OPTION;
 
