@@ -2,11 +2,13 @@
 #include "interactive.h"
 #include "sim.h"
 #include "util.h"
+#include "disasm.h"
 
 const char *help_string =
     "interactive mode commands\n"
     " p -- print (ex. p r4 / p ir)\n"
     " s -- step into next instruction\n"
+    " d -- disassemble current instruction\n"
     " r -- run\n"
     " q -- quit\n"
     " h -- help\n";
@@ -69,6 +71,7 @@ void interactive_print(CPU *cpu, int t) {
 int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
     int cont = 1;
     int res;
+    char disasm_str[30];
     char prompt_str[15];
     static PROMPT p;
 
@@ -83,6 +86,10 @@ int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
                 break;
             case 's': /* step */
                 cont = 0;
+                break;
+            case 'd':
+                disasm(cpu->nir, disasm_str, sizeof(disasm_str));
+                printf("   0x%06x: %s\n", cpu->pc, disasm_str);
                 break;
             case 'q': /* quit */
                 cont = 0; option->mode = MODE_QUIT;
