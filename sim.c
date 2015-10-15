@@ -173,7 +173,7 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
 void sim_run(CPU *cpu, MEMORY *m, OPTION *option) {
     unsigned int c = 0;
     initialize_cpu(cpu, m, option);
-    for (;;) {
+    while (option->mode != MODE_QUIT) {
         c++;
         if (option->mode == MODE_INTERACTIVE) {
             interactive_prompt(cpu, m, option);

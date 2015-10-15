@@ -16,7 +16,7 @@ const char *help_string =
 #define PRINT_TARGET_LR -3
 
 int prompt(char *s, PROMPT *p) {
-    char command[64], *arg;
+    char c, command[64], *arg;
 
     printf("%s", s);
     if (fgets(command, 63, stdin) == NULL) {
@@ -27,10 +27,12 @@ int prompt(char *s, PROMPT *p) {
     if (command[0] == '\n') { /* repeat */
         return 1;
     }
-    p->c = command[0];
-    arg = command + 2;
+    p->c = c = command[0];
 
-    if (command[0] == 'p') {
+    arg = command + 1;
+    while (arg[0] == ' ') arg = arg + 1;
+
+    if (c == 'p') {
         if (arg[0] == 'r') {
             if ('0' <= arg[2] && arg[2] <= '9') {
                 p->target = (arg[1] - '0') * 10 + (arg[2] - '0');
