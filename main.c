@@ -14,7 +14,7 @@ size_t load_instructions_from_file(MEMORY *mem, char *filename, size_t max_size)
 
 int main(int argc, char *argv[]) {
     int c;
-    const char *optstring = "hi";
+    const char *optstring = "hie:";
     char *filename;
     OPTION option;
 
@@ -34,6 +34,9 @@ int main(int argc, char *argv[]) {
                 break;
             case 'i':
                 option.mode = MODE_INTERACTIVE;
+                break;
+            case 'e':
+                option.entry_point = atoi(optarg);
                 break;
             case '?':
                 return -1;
