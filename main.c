@@ -12,6 +12,12 @@ static char *__file;
 
 size_t load_instructions_from_file(MEMORY *mem, char *filename, size_t max_size);
 
+static const char *help_string =
+    "usage: sim [options] file\n"
+    "options:\n"
+    "-i               interactive mode\n"
+    "-e <entry_point> set entry_point (default=0)\n";
+
 int main(int argc, char *argv[]) {
     int c;
     const char *optstring = "hie:";
@@ -27,9 +33,7 @@ int main(int argc, char *argv[]) {
     while ((c = getopt(argc, argv, optstring)) != -1) {
         switch (c) {
             case 'h':
-                printf("usage: sim [options] file\n"
-                       "options:\n"
-                       "-i    interactive mode\n");
+                puts(help_string);
                 return 0;
                 break;
             case 'i':
