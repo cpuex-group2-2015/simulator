@@ -41,6 +41,7 @@ typedef struct memory_t {
 typedef struct option_t {
     unsigned int entry_point;
     int mode;
+    int interactive;
     FILE *fp;
 } OPTION;
 

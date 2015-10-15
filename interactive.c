@@ -20,8 +20,8 @@ int prompt(char *s, PROMPT *p) {
 
     printf("%s", s);
     if (fgets(command, 63, stdin) == NULL) {
-        command[0] = 'r';
-        printf("r\n");
+        command[0] = 'q';
+        printf("q\n");
     }
 
     if (command[0] == '\n') { /* repeat */
