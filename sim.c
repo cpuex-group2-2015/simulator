@@ -137,7 +137,7 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
             break;
         /* b, bl */
         case 18:
-            nia = cpu->pc + si;
+            nia = (uint16_t) si;
             if (BIT(ir, 25)) {
                 cpu->lr = cpu->pc + 4;
             }
@@ -145,7 +145,7 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
         /* bc, bcl */
         case 16:
             if (BIT(cpu->cr, 3 - DOWNTO(ir, 23, 22)) == BIT(ir, 24)) {
-                nia = cpu->pc + si;
+                nia = (uint16_t) si;
             }
             if (BIT(ir, 25)) {
                 cpu->lr = cpu->pc + 4;
