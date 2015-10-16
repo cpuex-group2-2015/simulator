@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "sim.h"
+#include "instruction.h"
 #include "interactive.h"
 
 void load_instruction(unsigned int *ir, MEMORY *m, unsigned int pc) {
@@ -45,32 +46,32 @@ void extended_op(CPU *cpu, MEMORY *m, int rx, int ry, int rz, uint16_t xo) {
     int ea;
     switch (xo) {
         /* ldx  */
-        case 23:
+        case XO_LDX:
             ea = (ry == 0 ? 0 : cpu->gpr[ry]) + cpu->gpr[rz];
             load_from_sram(&(cpu->gpr[rx]), m, ea, sizeof(GPR));
             break;
         /* stx */
-        case 151:
+        case XO_STX:
             ea = (ry == 0 ? 0 : cpu->gpr[ry]) + cpu->gpr[rz];
             store_to_sram(&(cpu->gpr[rx]), m, ea, sizeof(GPR));
             break;
         /* add */
-        case 266:
+        case XO_ADD:
             cpu->gpr[rx] = cpu->gpr[ry] + cpu->gpr[rz];
         /* and */
-        case 28:
+        case XO_AND:
             cpu->gpr[ry] = cpu->gpr[rx] & cpu->gpr[rz];
             break;
         /* or  */
-        case 444:
+        case XO_OR:
             cpu->gpr[ry] = cpu->gpr[rx] | cpu->gpr[rz];
             break;
         /* mtlr */
-        case 467:
+        case XO_MTLR:
             cpu->lr = cpu->gpr[rx];
             break;
         /* mflr */
-        case 339:
+        case XO_MFLR:
             cpu->gpr[rx] = cpu->lr;
             break;
         default:
@@ -87,7 +88,7 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
     nia = cpu->pc + 4;
 
     /* halt */
-    if (opcode == 0x3f) {
+    if (opcode == OP_HALT) {
         return 0;
     }
 
@@ -104,46 +105,46 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
 
     switch (opcode) {
         /* extended_opcode */
-        case 31:
+        case OP_XO:
             extended_op(cpu, m, rx, ry, rz, DOWNTO(ir, 10, 1));
             break;
         /* ld */
-        case 32:
+        case OP_LD:
             ea = (ry == 0 ? 0 : cpu->gpr[ry]) + si;
             load_from_sram(&(cpu->gpr[rx]), m, ea, sizeof(GPR));
             break;
         /* st */
-        case 36:
+        case OP_ST:
             ea = (ry == 0 ? 0 : cpu->gpr[ry]) + si;
             store_to_sram(&(cpu->gpr[rx]), m, ea, sizeof(GPR));
             break;
         /* addi */
-        case 14:
+        case OP_ADDI:
             cpu->gpr[rx] = (int16_t) si + (ry == 0 ? 0 : cpu->gpr[ry]);
             break;
         /* addis */
-        case 15:
+        case OP_ADDIS:
             cpu->gpr[rx] = ((int32_t) si << 16) + (ry == 0 ? 0 : cpu->gpr[ry]);
         /* cmpi */
-        case 11:
+        case OP_CMPI:
             a = cpu->gpr[rx];
             cpu->cr = a < si ? 0x8 : (a > si ? 0x4 : 0x2);
             break;
         /* cmp */
-        case 30:
+        case OP_CMP:
             a = cpu->gpr[rx];
             b = cpu->gpr[ry];
             cpu->cr = a < b  ? 0x8 : (a > b  ? 0x4 : 0x2);
             break;
         /* b, bl */
-        case 18:
+        case OP_B:
             nia = (uint16_t) si;
             if (BIT(ir, 25)) {
                 cpu->lr = cpu->pc + 4;
             }
             break;
         /* bc, bcl */
-        case 16:
+        case OP_BC:
             if (BIT(cpu->cr, 3 - DOWNTO(ir, 23, 22)) == BIT(ir, 24)) {
                 nia = (uint16_t) si;
             }
@@ -152,11 +153,11 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
             }
             break;
         /* blr */
-        case 19:
+        case OP_BLR:
             nia = cpu->lr;
             break;
         /* send / recv */
-        case 0:
+        case OP_SENDRECV:
             simulate_io(DOWNTO(ir, 20, 20), &(cpu->gpr[rx]), option->fp);
             break;
         default:

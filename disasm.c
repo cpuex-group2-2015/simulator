@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "sim.h"
+#include "instruction.h"
 
 int disasm_xo(unsigned int ir, char *buf, size_t n) {
     int xo = DOWNTO(ir, 10, 1);
@@ -10,31 +11,31 @@ int disasm_xo(unsigned int ir, char *buf, size_t n) {
 
     switch(xo) {
         /* ldx */
-        case 23:
+        case XO_LDX:
             snprintf(buf, n, "ldx   r%d, r%d, r%d", rx, ry, rz);
             break;
         /* stx */
-        case 151:
+        case XO_STX:
             snprintf(buf, n, "stx   r%d, r%d, r%d", rx, ry, rz);
             break;
         /* add */
-        case 266:
+        case XO_ADD:
             snprintf(buf, n, "add   r%d, r%d, r%d", rx, ry, rz);
             break;
         /* and */
-        case 28:
+        case XO_AND:
             snprintf(buf, n, "and   r%d, r%d, r%d", ry, rx, rz);
             break;
         /* or */
-        case 444:
+        case XO_OR:
             snprintf(buf, n, "or    r%d, r%d, r%d", ry, rx, rz);
             break;
         /* mtlr */
-        case 467:
+        case XO_MTLR:
             snprintf(buf, n, "mtlr  r%d", rx);
             break;
         /* mflr */
-        case 339:
+        case XO_MFLR:
             snprintf(buf, n, "mflr  r%d", rx);
             break;
         default:
@@ -56,7 +57,7 @@ int disasm(unsigned int ir, char *buf, size_t n) {
 
     switch(opcode) {
         /* ld */
-        case 32:
+        case OP_LD:
             if (d == 0) {
                 snprintf(buf, n, "ld    r%d, r%d", rx, ry);
             } else {
@@ -64,7 +65,7 @@ int disasm(unsigned int ir, char *buf, size_t n) {
             }
             break;
         /* st */
-        case 36:
+        case OP_ST:
             if (d == 0) {
                 snprintf(buf, n, "st    r%d, r%d", rx, ry);
             } else {
@@ -72,7 +73,7 @@ int disasm(unsigned int ir, char *buf, size_t n) {
             }
             break;
         /* addi */
-        case 14:
+        case OP_ADDI:
             if (ry == 0) {
                 snprintf(buf, n, "li    r%d, %d", rx, (int16_t) d);
             } else {
@@ -80,7 +81,7 @@ int disasm(unsigned int ir, char *buf, size_t n) {
             }
             break;
         /* addis */
-        case 15:
+        case OP_ADDIS:
             if (ry == 0) {
                 snprintf(buf, n, "addis r%d, 0, %d", rx, (int16_t) d);
             } else {
@@ -88,11 +89,11 @@ int disasm(unsigned int ir, char *buf, size_t n) {
             }
             break;
         /* andi */
-        case 28:
+        case OP_ANDI:
             snprintf(buf, n, "andi  r%d, r%d, %u", ry, rx, d);
             break;
         /* ori */
-        case 25:
+        case OP_ORI:
             if (rx == 0 && ry == 0 && d == 0) {
                 strncpy(buf, "nop", n);
             } else {
@@ -100,15 +101,15 @@ int disasm(unsigned int ir, char *buf, size_t n) {
             }
             break;
         /* cmpi */
-        case 11:
+        case OP_CMPI:
             snprintf(buf, n, "cmpi  r%d, %d", rx, d);
             break;
         /* cmp */
-        case 30:
+        case OP_CMP:
             snprintf(buf, n, "cmp   r%d, r%d", rx, ry);
             break;
         /* b */
-        case 18:
+        case OP_B:
             if (BIT(ir, 25)) {
                 snprintf(buf, n, "bl    0x%06x", (uint16_t) d);
             } else {
@@ -116,7 +117,7 @@ int disasm(unsigned int ir, char *buf, size_t n) {
             }
             break;
         /* bc */
-        case 16:
+        case OP_BC:
             if (DOWNTO(ir, 24, 22) % 4 == 0) {
                 snprintf(buf, n, "%s    %d, %d, 0x%06x",
                     BIT(ir, 25) ? "bcl" : "bc ",
@@ -127,8 +128,12 @@ int disasm(unsigned int ir, char *buf, size_t n) {
                 snprintf(buf, n, "%s    0x%06x", branch_s[DOWNTO(ir, 24, 22)], (uint16_t) d);
             }
             break;
+        /* halt */
+        case OP_HALT:
+            strncpy(buf, "halt", n);
+            break;
         /* Extended Opcode */
-        case 31:
+        case OP_XO:
             return disasm_xo(ir, buf, n);
             break;
         default:
