@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "interactive.h"
 #include "sim.h"
 #include "util.h"
@@ -68,10 +69,30 @@ void interactive_print(CPU *cpu, int t) {
     }
 }
 
+void print_disasm_inst(CPU *cpu, MEMORY *m, int before, int after) {
+    char disasm_str[30];
+
+    unsigned int s = cpu->pc + before * 4;
+    unsigned int e = cpu->pc + after * 4;
+    unsigned int ir;
+    unsigned int i;
+
+    if (s > cpu->pc) s = 0;
+    if (e > m->ir_space_size - 4) e = m->ir_space_size - 4;
+
+    for (i = s; i <= e; i = i + 4) {
+        load_instruction(&ir, m, i);
+        disasm(ir, disasm_str, sizeof(disasm_str));
+        printf("%s 0x%06x: %s\n", i == cpu->pc ? "=>" : "  ", i, disasm_str);
+
+        memset(disasm_str, 0, sizeof(disasm_str));
+    }
+
+}
+
 int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
     int cont = 1;
     int res;
-    char disasm_str[30];
     char prompt_str[15];
     static PROMPT p;
 
@@ -88,8 +109,7 @@ int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
                 cont = 0;
                 break;
             case 'd':
-                disasm(cpu->nir, disasm_str, sizeof(disasm_str));
-                printf("   0x%06x: %s\n", cpu->pc, disasm_str);
+                print_disasm_inst(cpu, m, -1, 5);
                 break;
             case 'q': /* quit */
                 cont = 0; option->mode = MODE_QUIT;

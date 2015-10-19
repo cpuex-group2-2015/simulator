@@ -31,6 +31,7 @@ typedef struct memory_t {
     uint8_t *sram;
     unsigned int brom_size;
     unsigned int sram_size;
+    unsigned int ir_space_size;
 } MEMORY;
 
 #define MODE_INTERACTIVE 1
@@ -48,3 +49,4 @@ typedef struct option_t {
 #endif
 
 void sim_run(CPU *cpu, MEMORY *mem, OPTION *option);
+void load_instruction(unsigned int *ir, MEMORY *m, unsigned int pc);

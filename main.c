@@ -70,6 +70,7 @@ int main(int argc, char *argv[]) {
 
     if (ir_space_size > 0) {
         printf("loaded %lu byte\n", ir_space_size);
+        mem.ir_space_size = ir_space_size;
         sim_run(&cpu, &mem, &option);
     }
 
