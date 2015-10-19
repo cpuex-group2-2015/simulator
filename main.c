@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include "sim.h"
+#include "disasm.h"
 
 #define BROM_SIZE 4194304
 #define SRAM_SIZE   4194304
@@ -16,11 +17,13 @@ static const char *help_string =
     "usage: sim [options] file\n"
     "options:\n"
     "-i               interactive mode\n"
-    "-e <entry_point> set entry_point (default=0)\n";
+    "-e <entry_point> set entry_point (default=0)\n"
+    "-d               disassemble file and exit\n";
 
 int main(int argc, char *argv[]) {
     int c;
-    const char *optstring = "hie:";
+    int disassemble_mode = 0;
+    const char *optstring = "hie:d";
     char *filename;
     OPTION option;
 
@@ -44,6 +47,9 @@ int main(int argc, char *argv[]) {
                 break;
             case 'e':
                 option.entry_point = atoi(optarg);
+                break;
+            case 'd':
+                disassemble_mode = 1;
                 break;
             case '?':
                 return -1;
@@ -70,9 +76,13 @@ int main(int argc, char *argv[]) {
     ir_space_size = load_instructions_from_file(&mem, filename, BROM_SIZE);
 
     if (ir_space_size > 0) {
-        printf("loaded %lu byte\n", ir_space_size);
         mem.ir_space_size = ir_space_size;
-        sim_run(&cpu, &mem, &option);
+        if (disassemble_mode) {
+            print_disasm_inst(0, 0, ir_space_size / 4, &mem, 0, NULL);
+        } else {
+            printf("loaded %lu byte\n", ir_space_size);
+            sim_run(&cpu, &mem, &option);
+        }
     }
 
     free(mem.brom);

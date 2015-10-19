@@ -72,6 +72,7 @@ void interactive_print(CPU *cpu, int t) {
     }
 }
 
+/*
 void print_disasm_inst(CPU *cpu, MEMORY *m, OPTION *option, int before, int after) {
     char disasm_str[30];
 
@@ -95,6 +96,7 @@ void print_disasm_inst(CPU *cpu, MEMORY *m, OPTION *option, int before, int afte
     }
 
 }
+*/
 
 int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
     int cont = 1;
@@ -116,7 +118,7 @@ int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
                 cont = 0;
                 break;
             case 'd':
-                print_disasm_inst(cpu, m, option, -1, 5);
+                print_disasm_inst(cpu->pc, -1, 5, m, 1, option->breakpoint);
                 break;
             case 'b':
                 bp = set_breakpoint_addr(cpu->pc, option->breakpoint);
