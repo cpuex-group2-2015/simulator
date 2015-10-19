@@ -4,6 +4,7 @@
 #include "sim.h"
 #include "util.h"
 #include "disasm.h"
+#include "breakpoint.h"
 
 const char *help_string =
     "interactive mode commands\n"
@@ -95,6 +96,7 @@ int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
     int res;
     char prompt_str[15];
     static PROMPT p;
+    BREAKPOINT *bp;
 
     sprintf(prompt_str, "0x%06x> ", cpu->pc);
     while (cont && (res = prompt(prompt_str, &p))) {
@@ -110,6 +112,11 @@ int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
                 break;
             case 'd':
                 print_disasm_inst(cpu, m, -1, 5);
+                break;
+            case 'b':
+                bp = set_breakpoint_addr(cpu->pc, option->breakpoint);
+                option->breakpoint = bp;
+                printf("set breakpoint %d at 0x%06x\n", bp->n, cpu->pc);
                 break;
             case 'q': /* quit */
                 cont = 0; option->mode = MODE_QUIT;

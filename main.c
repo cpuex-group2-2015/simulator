@@ -28,6 +28,7 @@ int main(int argc, char *argv[]) {
     option.mode = MODE_RUN;
     option.interactive = 0;
     option.fp = stdout;
+    option.breakpoint = NULL;
 
     __file = argv[0];
 

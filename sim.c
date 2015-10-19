@@ -4,6 +4,7 @@
 #include "sim.h"
 #include "instruction.h"
 #include "interactive.h"
+#include "breakpoint.h"
 
 void load_instruction(unsigned int *ir, MEMORY *m, unsigned int pc) {
     memcpy(ir, m->brom + pc, sizeof(unsigned int));
@@ -173,9 +174,14 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
 
 void sim_run(CPU *cpu, MEMORY *m, OPTION *option) {
     unsigned int c = 0;
+    int n;
     initialize_cpu(cpu, m, option);
     for(;;) {
         c++;
+        if ((n = check_breakpoint(cpu->pc, cpu->nir, option->breakpoint)) > 0) {
+            option->mode = MODE_INTERACTIVE;
+            printf("stop at breakpoint %d\n", n);
+        }
         if (option->mode == MODE_INTERACTIVE) {
             interactive_prompt(cpu, m, option);
         }

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "util.h"
+#include "breakpoint.h"
 
 #define GPR_LEN 32    /* Number of GPRs */
 #define FPR_LEN 32    /* Number of FPRs */
@@ -34,6 +35,8 @@ typedef struct memory_t {
     unsigned int ir_space_size;
 } MEMORY;
 
+
+
 #define MODE_INTERACTIVE 1
 #define MODE_STEP 2
 #define MODE_QUIT 3
@@ -44,9 +47,9 @@ typedef struct option_t {
     int mode;
     int interactive;
     FILE *fp;
+    BREAKPOINT *breakpoint;
 } OPTION;
-
-#endif
 
 void sim_run(CPU *cpu, MEMORY *mem, OPTION *option);
 void load_instruction(unsigned int *ir, MEMORY *m, unsigned int pc);
+#endif
