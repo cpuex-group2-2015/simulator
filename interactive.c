@@ -10,8 +10,9 @@ const char *help_string =
     "interactive mode commands\n"
     " p -- print (ex. p r4 / p ir)\n"
     " s -- step into next instruction\n"
-    " d -- disassemble current instruction\n"
     " r -- run\n"
+    " d -- disassemble current instruction\n"
+    " s -- set breakpoint\n"
     " q -- quit\n"
     " h -- help\n";
 
