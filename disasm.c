@@ -125,8 +125,12 @@ int disasm(unsigned int ir, char *buf, size_t n) {
                     DOWNTO(ir, 23, 22),
                     (uint16_t) d);
             } else {
-                snprintf(buf, n, "%s    0x%06x", branch_s[DOWNTO(ir, 24, 22)], (uint16_t) d);
+                snprintf(buf, n, "%s   0x%06x", branch_s[DOWNTO(ir, 24, 22)], (uint16_t) d);
             }
+            break;
+        /* blr */
+        case OP_BLR:
+            strncpy(buf, "blr", n);
             break;
         /* halt */
         case OP_HALT:
