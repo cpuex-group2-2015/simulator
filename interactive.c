@@ -13,6 +13,7 @@ const char *help_string =
     " r -- run\n"
     " d -- disassemble current instruction\n"
     " s -- set breakpoint\n"
+    " l -- show breakpoint list\n"
     " q -- quit\n"
     " h -- help\n";
 
@@ -71,7 +72,7 @@ void interactive_print(CPU *cpu, int t) {
     }
 }
 
-void print_disasm_inst(CPU *cpu, MEMORY *m, int before, int after) {
+void print_disasm_inst(CPU *cpu, MEMORY *m, OPTION *option, int before, int after) {
     char disasm_str[30];
 
     unsigned int s = cpu->pc + before * 4;
@@ -85,7 +86,10 @@ void print_disasm_inst(CPU *cpu, MEMORY *m, int before, int after) {
     for (i = s; i <= e; i = i + 4) {
         load_instruction(&ir, m, i);
         disasm(ir, disasm_str, sizeof(disasm_str));
-        printf("%s 0x%06x: %s\n", i == cpu->pc ? "=>" : "  ", i, disasm_str);
+        printf("%s %c 0x%06x: %s\n",
+            i == cpu->pc ? "=>" : "  ",
+            check_breakpoint(i, ir, option->breakpoint) ? 'B' : ' ',
+            i, disasm_str);
 
         memset(disasm_str, 0, sizeof(disasm_str));
     }
@@ -112,12 +116,15 @@ int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
                 cont = 0;
                 break;
             case 'd':
-                print_disasm_inst(cpu, m, -1, 5);
+                print_disasm_inst(cpu, m, option, -1, 5);
                 break;
             case 'b':
                 bp = set_breakpoint_addr(cpu->pc, option->breakpoint);
                 option->breakpoint = bp;
                 printf("set breakpoint %d at 0x%06x\n", bp->n, cpu->pc);
+                break;
+            case 'l':
+                print_breakpoint_list(option->breakpoint);
                 break;
             case 'q': /* quit */
                 cont = 0; option->mode = MODE_QUIT;

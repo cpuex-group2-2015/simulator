@@ -34,3 +34,17 @@ int check_breakpoint(unsigned int addr, unsigned int ir, BREAKPOINT *bp) {
     }
     return 0;
 }
+
+void print_breakpoint_list(BREAKPOINT *bp) {
+    if (bp == NULL) {
+        printf("No breakpoints\n");
+        return;
+    }
+    printf("ID  TARGET\n");
+    while (bp != NULL) {
+        if (bp->type == BREAKPOINT_TYPE_ADDR) {
+            printf("%2d  0x%06x\n", bp->n, bp->target.addr);
+        }
+        bp = bp->next;
+    }
+}
