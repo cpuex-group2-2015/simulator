@@ -61,11 +61,11 @@ void extended_op(CPU *cpu, MEMORY *m, int rx, int ry, int rz, uint16_t xo) {
             cpu->gpr[rx] = cpu->gpr[ry] + cpu->gpr[rz];
         /* and */
         case XO_AND:
-            cpu->gpr[ry] = cpu->gpr[rx] & cpu->gpr[rz];
+            cpu->gpr[rx] = cpu->gpr[ry] & cpu->gpr[rz];
             break;
         /* or  */
         case XO_OR:
-            cpu->gpr[ry] = cpu->gpr[rx] | cpu->gpr[rz];
+            cpu->gpr[rx] = cpu->gpr[ry] | cpu->gpr[rz];
             break;
         /* mtlr */
         case XO_MTLR:

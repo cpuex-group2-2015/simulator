@@ -24,11 +24,11 @@ int disasm_xo(unsigned int ir, char *buf, size_t n) {
             break;
         /* and */
         case XO_AND:
-            snprintf(buf, n, "and   r%d, r%d, r%d", ry, rx, rz);
+            snprintf(buf, n, "and   r%d, r%d, r%d", rx, ry, rz);
             break;
         /* or */
         case XO_OR:
-            snprintf(buf, n, "or    r%d, r%d, r%d", ry, rx, rz);
+            snprintf(buf, n, "or    r%d, r%d, r%d", rx, ry, rz);
             break;
         /* mtlr */
         case XO_MTLR:
@@ -90,14 +90,14 @@ int disasm(unsigned int ir, char *buf, size_t n) {
             break;
         /* andi */
         case OP_ANDI:
-            snprintf(buf, n, "andi  r%d, r%d, %u", ry, rx, d);
+            snprintf(buf, n, "andi  r%d, r%d, %u", rx, ry, d);
             break;
         /* ori */
         case OP_ORI:
             if (rx == 0 && ry == 0 && d == 0) {
                 strncpy(buf, "nop", n);
             } else {
-                snprintf(buf, n, "ori   r%d, r%d, %u", ry, rx, d);
+                snprintf(buf, n, "ori   r%d, r%d, %u", rx, ry, d);
             }
             break;
         /* cmpi */
