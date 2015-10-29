@@ -13,6 +13,12 @@ static char *__file;
 
 size_t load_instructions_from_file(MEMORY *mem, char *filename, size_t max_size);
 
+static const char *logo = "\n"
+"  ___  __ \\_  __ \\_ |     / /__  ____/__  __ \\__  /___  ____/_  ___/_  ___/    ___  __ \\_  ____/\n"
+"  __  /_/ /  / / /_ | /| / /__  __/  __  /_/ /_  / __  __/  _____ \\_____ \\     __  /_/ /  /     \n"
+"  _  ____// /_/ /__ |/ |/ / _  /___  _  _, _/_  /___  /___  ____/ /____/ /     _  ____// /___   \n"
+"  /_/     \\____/ ____/|__/  /_____/  /_/ |_| /_____/_____/  /____/ /____/      /_/     \\____/   \n\n";
+
 static const char *help_string =
     "usage: sim [options] file\n"
     "options:\n"
@@ -38,6 +44,7 @@ int main(int argc, char *argv[]) {
     while ((c = getopt(argc, argv, optstring)) != -1) {
         switch (c) {
             case 'h':
+                puts(logo);
                 puts(help_string);
                 return 0;
                 break;
