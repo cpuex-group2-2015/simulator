@@ -128,6 +128,13 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
         case OP_ADDIS:
             cpu->gpr[rx] = ((int32_t) si << 16) + (ry == 0 ? 0 : cpu->gpr[ry]);
         /* cmpi */
+            break;
+        case OP_ANDI:
+            cpu->gpr[rx] = (uint16_t) si & cpu->gpr[ry];
+            break;
+        case OP_ORI:
+            cpu->gpr[rx] = (uint16_t) si | cpu->gpr[ry];
+            break;
         case OP_CMPI:
             a = cpu->gpr[rx];
             cpu->cr = a < si ? 0x8 : (a > si ? 0x4 : 0x2);
