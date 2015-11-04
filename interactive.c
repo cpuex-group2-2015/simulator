@@ -110,32 +110,6 @@ void interactive_print(CPU *cpu, int t) {
     }
 }
 
-/*
-void print_disasm_inst(CPU *cpu, MEMORY *m, OPTION *option, int before, int after) {
-    char disasm_str[30];
-
-    unsigned int s = cpu->pc + before * 4;
-    unsigned int e = cpu->pc + after * 4;
-    unsigned int ir;
-    unsigned int i;
-
-    if (s > cpu->pc) s = 0;
-    if (e > m->ir_space_size - 4) e = m->ir_space_size - 4;
-
-    for (i = s; i <= e; i = i + 4) {
-        load_instruction(&ir, m, i);
-        disasm(ir, disasm_str, sizeof(disasm_str));
-        printf("%s %c 0x%06x: %s\n",
-            i == cpu->pc ? "=>" : "  ",
-            check_breakpoint(i, ir, option->breakpoint) ? 'B' : ' ',
-            i, disasm_str);
-
-        memset(disasm_str, 0, sizeof(disasm_str));
-    }
-
-}
-*/
-
 int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
     int cont = 1;
     int res;
