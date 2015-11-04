@@ -12,7 +12,7 @@ const char *help_string =
     " s -- step into next instruction\n"
     " r -- run\n"
     " d -- disassemble current instruction\n"
-    " s -- set breakpoint\n"
+    " b -- set breakpoint\n"
     " l -- show breakpoint list\n"
     " q -- quit\n"
     " h -- help\n";
@@ -33,12 +33,13 @@ int prompt(char *s, PROMPT *p) {
     if (command[0] == '\n') { /* repeat */
         return 1;
     }
-    p->c = c = command[0];
+    c = command[0];
 
     arg = command + 1;
     while (arg[0] == ' ') arg = arg + 1;
 
     if (c == 'p') {
+        p->c = ICMD_PRINT;
         if (arg[0] == 'r') {
             if ('0' <= arg[2] && arg[2] <= '9') {
                 p->target = (arg[1] - '0') * 10 + (arg[2] - '0');
@@ -53,6 +54,18 @@ int prompt(char *s, PROMPT *p) {
             p->target = PRINT_TARGET_LR;
         }
     }
+    else if (c == 's') p->c = ICMD_STEP;
+    else if (c == 'r') p->c = ICMD_RUN;
+    else if (c == 'd') p->c = ICMD_DISASM;
+    else if (c == 'b') p->c = ICMD_BPSET;
+    else if (c == 'l') p->c = ICMD_BPSHOW;
+    else if (c == 'q') p->c = ICMD_QUIT;
+    else if (c == 'h') p->c = ICMD_HELP;
+    else {
+        p->c = ICMD_INVALID;
+        p->target = c;
+    }
+
     return 1;
 }
 
@@ -108,37 +121,36 @@ int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
     sprintf(prompt_str, "0x%06x> ", cpu->pc);
     while (cont && (res = prompt(prompt_str, &p))) {
         switch (p.c) {
-            case 'p': /* print */
+            case ICMD_PRINT: /* print */
                 interactive_print(cpu, p.target);
                 break;
-            case 'r': /* run */
+            case ICMD_RUN: /* run */
                 cont = 0; option->mode = MODE_RUN;
                 break;
-            case 's': /* step */
+            case ICMD_STEP: /* step */
                 cont = 0;
                 break;
-            case 'd':
+            case ICMD_DISASM:
                 print_disasm_inst(cpu->pc, -1, 5, m, 1, option->breakpoint);
                 break;
-            case 'b':
+            case ICMD_BPSET:
                 bp = set_breakpoint_addr(cpu->pc, option->breakpoint);
                 option->breakpoint = bp;
                 printf("set breakpoint %d at 0x%06x\n", bp->n, cpu->pc);
                 break;
-            case 'l':
+            case ICMD_BPSHOW:
                 print_breakpoint_list(option->breakpoint);
                 break;
-            case 'q': /* quit */
+            case ICMD_QUIT: /* quit */
                 cont = 0; option->mode = MODE_QUIT;
                 break;
-            case 'h': /* help */
+            case ICMD_HELP: /* help */
                 puts(help_string);
                 break;
-            case '\0': /* do nothing */
-            case '\n': /* do nothing */
+            case ICMD_NOP: /* do nothing */
                 break;
             default: /* invalid command */
-                printf("invalid command: %c\n", p.c);
+                printf("invalid command: %c\n", p.target);
         }
     }
     return 0;
