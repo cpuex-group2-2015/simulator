@@ -23,6 +23,27 @@ BREAKPOINT *set_breakpoint_addr(unsigned int addr, BREAKPOINT *breakpoint) {
     return bp;
 }
 
+BREAKPOINT *remove_breakpoint(int n, BREAKPOINT *bp) {
+    BREAKPOINT *orig = bp;
+    BREAKPOINT *bp2;
+
+    if (orig->n == n) {
+        bp2 = orig->next;
+        free(orig);
+        return bp2;
+    }
+    while (bp != NULL) {
+        bp2 = bp->next;
+        if (bp2 != NULL && bp2->n == n) {
+            bp->next = bp2->next;
+            free(bp2);
+            break;
+        }
+        bp = bp2;
+    }
+    return orig;
+}
+
 int check_breakpoint(unsigned int addr, unsigned int ir, BREAKPOINT *bp) {
     while (bp != NULL) {
         if (bp->type == BREAKPOINT_TYPE_ADDR) {

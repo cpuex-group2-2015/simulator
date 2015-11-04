@@ -8,18 +8,31 @@
 
 const char *help_string =
     "interactive mode commands\n"
-    " p -- print (ex. p r4 / p ir)\n"
-    " s -- step into next instruction\n"
-    " r -- run\n"
-    " d -- disassemble current instruction\n"
-    " b -- set breakpoint\n"
-    " l -- show breakpoint list\n"
-    " q -- quit\n"
-    " h -- help\n";
+    " p  -- print (ex. p r4 / p ir)\n"
+    " s  -- step into next instruction\n"
+    " r  -- run\n"
+    " d  -- disassemble current instruction\n"
+    " b  -- set breakpoint\n"
+    " bl -- show breakpoint list\n"
+    " br -- remove breakpoint\n"
+    " q  -- quit\n"
+    " h  -- help\n";
 
 #define PRINT_TARGET_IR -1
 #define PRINT_TARGET_CR -2
 #define PRINT_TARGET_LR -3
+
+char *parse_int10(char *s, int *buf) {
+    int n = 0;
+
+    while ('0' <= *s && *s <= '9') {
+        n = n * 10 + (*s - '0');
+        s = s + 1;
+    }
+
+    *buf = n;
+    return s;
+}
 
 int prompt(char *s, PROMPT *p) {
     char c, command[64], *arg;
@@ -35,11 +48,11 @@ int prompt(char *s, PROMPT *p) {
     }
     c = command[0];
 
-    arg = command + 1;
-    while (arg[0] == ' ') arg = arg + 1;
-
     if (c == 'p') {
         p->c = ICMD_PRINT;
+
+        arg = command + 1;
+        while (arg[0] == ' ') arg = arg + 1;
         if (arg[0] == 'r') {
             if ('0' <= arg[2] && arg[2] <= '9') {
                 p->target = (arg[1] - '0') * 10 + (arg[2] - '0');
@@ -57,7 +70,19 @@ int prompt(char *s, PROMPT *p) {
     else if (c == 's') p->c = ICMD_STEP;
     else if (c == 'r') p->c = ICMD_RUN;
     else if (c == 'd') p->c = ICMD_DISASM;
-    else if (c == 'b') p->c = ICMD_BPSET;
+    else if (c == 'b') {
+        if      (command[1] == 'l') p->c = ICMD_BPSHOW;
+        else if (command[1] == 'r') p->c = ICMD_BPREMOVE;
+        else                        p->c = ICMD_BPSET;
+        printf("BREAKPOINT: %d\n", p->c);
+
+        if (p->c == ICMD_BPREMOVE) {
+            arg = command + 2;
+            while (arg[0] == ' ') arg = arg + 1;
+
+            parse_int10(arg, &p->target);
+        }
+    }
     else if (c == 'l') p->c = ICMD_BPSHOW;
     else if (c == 'q') p->c = ICMD_QUIT;
     else if (c == 'h') p->c = ICMD_HELP;
@@ -140,6 +165,10 @@ int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
                 break;
             case ICMD_BPSHOW:
                 print_breakpoint_list(option->breakpoint);
+                break;
+            case ICMD_BPREMOVE:
+                printf("remove breakpoint %d\n", p.target);
+                bp = remove_breakpoint(p.target, bp);
                 break;
             case ICMD_QUIT: /* quit */
                 cont = 0; option->mode = MODE_QUIT;
