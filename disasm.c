@@ -144,6 +144,14 @@ int disasm(unsigned int ir, char *buf, size_t n) {
                 }
             }
             break;
+        /* send */
+        case OP_SEND:
+            snprintf(buf, n, "send  r%d", rx);
+            break;
+        /* recv */
+        case OP_RECV:
+            snprintf(buf, n, "recv  r%d", rx);
+            break;
         /* halt */
         case OP_HALT:
             strncpy(buf, "halt", n);

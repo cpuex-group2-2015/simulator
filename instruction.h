@@ -14,7 +14,8 @@
 #define OP_B        18
 #define OP_BC       16
 #define OP_BSPR     19
-#define OP_SENDRECV 0
+#define OP_SEND      1
+#define OP_RECV      2
 
 #define XO_LDX      23
 #define XO_STX      151

@@ -177,9 +177,14 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
                 }
             }
             break;
-        /* send / recv */
-        case OP_SENDRECV:
-            simulate_io(DOWNTO(ir, 20, 20), &(cpu->gpr[rx]), option->fp);
+        /* send */
+        case OP_SEND:
+            simulate_io(0, &(cpu->gpr[rx]), option->fp);
+            break;
+
+        /* recv */
+        case OP_RECV:
+            simulate_io(1, &(cpu->gpr[rx]), option->fp);
             break;
         default:
             break;
