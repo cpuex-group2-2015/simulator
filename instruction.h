@@ -13,7 +13,7 @@
 #define OP_CMP      30
 #define OP_B        18
 #define OP_BC       16
-#define OP_BLR      19
+#define OP_BSPR     19
 #define OP_SENDRECV 0
 
 #define XO_LDX      23
@@ -21,6 +21,6 @@
 #define XO_ADD      266
 #define XO_AND      28
 #define XO_OR       444
-#define XO_MTLR     467
-#define XO_MFLR     339
+#define XO_MTSPR    467
+#define XO_MFSPR    339
 #endif

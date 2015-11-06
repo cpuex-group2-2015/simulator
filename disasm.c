@@ -31,11 +31,15 @@ int disasm_xo(unsigned int ir, char *buf, size_t n) {
             snprintf(buf, n, "or    r%d, r%d, r%d", rx, ry, rz);
             break;
         /* mtlr */
-        case XO_MTLR:
-            snprintf(buf, n, "mtlr  r%d", rx);
+        case XO_MTSPR:
+            if (rz == 0) {
+                snprintf(buf, n, "mtlr  r%d", rx);
+            } else {
+                snprintf(buf, n, "mtctr r%d", rx);
+            }
             break;
         /* mflr */
-        case XO_MFLR:
+        case XO_MFSPR:
             snprintf(buf, n, "mflr  r%d", rx);
             break;
         default:
@@ -128,9 +132,17 @@ int disasm(unsigned int ir, char *buf, size_t n) {
                 snprintf(buf, n, "%s   0x%06x", branch_s[DOWNTO(ir, 24, 22)], (uint16_t) d);
             }
             break;
-        /* blr */
-        case OP_BLR:
-            strncpy(buf, "blr", n);
+        /* blr, bctr, bctrl */
+        case OP_BSPR:
+            if (BIT(ir, 22) == 0) {
+                strncpy(buf, "blr", n);
+            } else {
+                if (BIT(ir, 25) == 0) {
+                    strncpy(buf, "bctr", n);
+                } else {
+                    strncpy(buf, "bctrl", n);
+                }
+            }
             break;
         /* halt */
         case OP_HALT:
