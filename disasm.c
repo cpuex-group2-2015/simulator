@@ -42,6 +42,12 @@ int disasm_xo(unsigned int ir, char *buf, size_t n) {
         case XO_MFSPR:
             snprintf(buf, n, "mflr  r%d", rx);
             break;
+        case XO_SL:
+            snprintf(buf, n, "sl    r%d, r%d, r%d", rx, ry, rz);
+            break;
+        case XO_SR:
+            snprintf(buf, n, "sr    r%d, r%d, r%d", rx, ry, rz);
+            break;
         default:
             strncpy(buf, "unknown", n);
             return -1;

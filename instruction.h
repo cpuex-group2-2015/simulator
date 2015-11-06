@@ -24,4 +24,6 @@
 #define XO_OR       444
 #define XO_MTSPR    467
 #define XO_MFSPR    339
+#define XO_SL       24
+#define XO_SR       536
 #endif

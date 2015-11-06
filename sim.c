@@ -80,6 +80,15 @@ void extended_op(CPU *cpu, MEMORY *m, int rx, int ry, int rz, uint16_t xo) {
         case XO_MFSPR:
             cpu->gpr[rx] = cpu->lr;
             break;
+        /* sl */
+        case XO_SL:
+            cpu->gpr[rx] = cpu->gpr[ry] << (cpu->gpr[rz] & 0x1f);
+            break;
+        /* sr */
+        case XO_SR:
+            cpu->gpr[rx] = cpu->gpr[ry] >> (cpu->gpr[rz] & 0x1f);
+            break;
+
         default:
             printf("invalid extend-op: %d\n", xo);
             break;
@@ -181,7 +190,6 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
         case OP_SEND:
             simulate_io(0, &(cpu->gpr[rx]), option->fp);
             break;
-
         /* recv */
         case OP_RECV:
             simulate_io(1, &(cpu->gpr[rx]), option->fp);
