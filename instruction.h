@@ -14,6 +14,8 @@
 #define OP_B        18
 #define OP_BC       16
 #define OP_BSPR     19
+#define OP_LF       50
+#define OP_STF      52
 #define OP_SEND      1
 #define OP_RECV      2
 
@@ -24,6 +26,8 @@
 #define XO_OR       444
 #define XO_MTSPR    467
 #define XO_MFSPR    339
+#define XO_LFX      599
+#define XO_STFX     663
 #define XO_SL       24
 #define XO_SR       536
 

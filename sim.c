@@ -81,6 +81,16 @@ void extended_op(CPU *cpu, MEMORY *m, int rx, int ry, int rz, uint16_t xo) {
         case XO_MFSPR:
             cpu->gpr[rx] = cpu->lr;
             break;
+        /* ldx  */
+        case XO_LFX:
+            ea = (ry == 0 ? 0 : cpu->gpr[ry]) + cpu->gpr[rz];
+            load_from_sram(&(cpu->fpr[rx]), m, ea, sizeof(FPR));
+            break;
+        /* stx */
+        case XO_STFX:
+            ea = (ry == 0 ? 0 : cpu->gpr[ry]) + cpu->gpr[rz];
+            store_to_sram(&(cpu->fpr[rx]), m, ea, sizeof(FPR));
+            break;
         /* sl */
         case XO_SL:
             cpu->gpr[rx] = cpu->gpr[ry] << (cpu->gpr[rz] & 0x1f);
@@ -89,7 +99,6 @@ void extended_op(CPU *cpu, MEMORY *m, int rx, int ry, int rz, uint16_t xo) {
         case XO_SR:
             cpu->gpr[rx] = cpu->gpr[ry] >> (cpu->gpr[rz] & 0x1f);
             break;
-
         default:
             printf("invalid extend-op: %d\n", xo);
             break;
@@ -218,6 +227,16 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
                     cpu->lr = cpu->pc + 4;
                 }
             }
+            break;
+        /* lf */
+        case OP_LF:
+            ea = (ry == 0 ? 0 : cpu->gpr[ry]) + si;
+            load_from_sram(&(cpu->fpr[rx]), m, ea, sizeof(FPR));
+            break;
+        /* stf */
+        case OP_STF:
+            ea = (ry == 0 ? 0 : cpu->gpr[ry]) + si;
+            store_to_sram(&(cpu->fpr[rx]), m, ea, sizeof(FPR));
             break;
         /* send */
         case OP_SEND:
