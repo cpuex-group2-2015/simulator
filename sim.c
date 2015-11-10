@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 #include "sim.h"
 #include "instruction.h"
 #include "interactive.h"
@@ -91,6 +92,38 @@ void extended_op(CPU *cpu, MEMORY *m, int rx, int ry, int rz, uint16_t xo) {
 
         default:
             printf("invalid extend-op: %d\n", xo);
+            break;
+    }
+}
+
+void fp_op(CPU *cpu, int rx, int ry, int rz, uint16_t xo) {
+    float fra = ui2f(cpu->fpr[ry]);
+    float frb = ui2f(cpu->fpr[rz]);
+
+    switch (xo) {
+        case FP_MR:
+            cpu->fpr[rx] = cpu->fpr[rz];
+            break;
+        case FP_ADD:
+            cpu->fpr[rx] = f2ui(fra + frb);
+            break;
+        case FP_SUB:
+            cpu->fpr[rx] = f2ui(fra - frb);
+            break;
+        case FP_MUL:
+            cpu->fpr[rx] = f2ui(fra * frb);
+            break;
+        case FP_DIV:
+            cpu->fpr[rx] = f2ui(fra / frb);
+            break;
+        case FP_CMP:
+            if (isnan(fra) || isnan(frb)) cpu->cr = 0x2;
+            else if (fra < frb)           cpu->cr = 0x8;
+            else if (fra > frb)           cpu->cr = 0x4;
+            else                          cpu->cr = 0x2;
+            break;
+        default:
+            printf("invalid floating-point op: %d\n", xo);
             break;
     }
 }

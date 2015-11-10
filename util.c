@@ -8,3 +8,23 @@ void print_bin(unsigned int n) {
     }
     putchar('\n');
 }
+
+inline float ui2f(uint32_t ui) {
+    union uif {
+        uint32_t ui;
+        float f;
+    } uif;
+
+    uif.ui = ui;
+    return uif.f;
+}
+
+inline float f2ui(float f) {
+    union uif {
+        uint32_t ui;
+        float f;
+    } uif;
+
+    uif.f = f;
+    return uif.ui;
+}

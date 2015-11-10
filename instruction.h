@@ -26,4 +26,14 @@
 #define XO_MFSPR    339
 #define XO_SL       24
 #define XO_SR       536
+
+#define FP_MR       72
+#define FP_ADD      21
+#define FP_SUB      20
+#define FP_MUL      25
+#define FP_DIV      18
+#define FP_NEG      40
+#define FP_ABS      264
+#define FP_CMP      0
+
 #endif
