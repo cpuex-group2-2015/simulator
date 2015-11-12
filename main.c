@@ -24,12 +24,12 @@ static const char *help_string =
     "options:\n"
     "-i               interactive mode\n"
     "-e <entry_point> set entry_point (default=0)\n"
-    "-d               disassemble file and exit\n";
+    "-a               disassemble file and exit\n";
 
 int main(int argc, char *argv[]) {
     int c;
     int disassemble_mode = 0;
-    const char *optstring = "hie:d";
+    const char *optstring = "hie:a";
     char *filename;
     OPTION option;
 
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
             case 'e':
                 option.entry_point = atoi(optarg);
                 break;
-            case 'd':
+            case 'a':
                 disassemble_mode = 1;
                 break;
             case '?':
