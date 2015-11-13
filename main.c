@@ -117,7 +117,7 @@ size_t load_instructions_from_file(MEMORY *mem, char *filename, size_t max_size)
 
     size = st.st_size;
     if (size > max_size - 4) {
-        fprintf(stderr, "%s: too big file (%lu byte > %lu byte = brom)\n", __file, st.st_size, max_size);
+        fprintf(stderr, "%s: too big file (%lu byte > %lu byte = brom)\n", __file, (unsigned long) st.st_size, max_size);
         return 0;
     }
 
@@ -146,7 +146,7 @@ size_t load_init_data_from_file(MEMORY *mem, char *filename, size_t max_size) {
 
     size = st.st_size;
     if (size > max_size - 4) {
-        fprintf(stderr, "%s: too big file (%lu byte > %lu byte = sram)\n", __file, st.st_size, max_size);
+        fprintf(stderr, "%s: too big file (%lu byte > %lu byte = sram)\n", __file, (unsigned long) st.st_size, max_size);
         return 0;
     }
 
