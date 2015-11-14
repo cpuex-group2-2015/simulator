@@ -4,3 +4,4 @@
 build/*.o
 build/*.d
 test/*.bin
+bin/sim
