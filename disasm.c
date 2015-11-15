@@ -22,6 +22,10 @@ int disasm_xo(unsigned int ir, char *buf, size_t n) {
         case XO_ADD:
             snprintf(buf, n, "add   r%d, r%d, r%d", rx, ry, rz);
             break;
+        /* neg */
+        case XO_NEG:
+            snprintf(buf, n, "neg   r%d, r%d", rx, ry);
+            break;
         /* and */
         case XO_AND:
             snprintf(buf, n, "and   r%d, r%d, r%d", rx, ry, rz);
@@ -149,6 +153,12 @@ int disasm(unsigned int ir, char *buf, size_t n) {
                     strncpy(buf, "bctrl", n);
                 }
             }
+            break;
+        case OP_MFGTF:
+            snprintf(buf, n, "mfgtf  r%d, r%d", rx, ry);
+            break;
+        case OP_MFFTG:
+            snprintf(buf, n, "mfftg  r%d, r%d", rx, ry);
             break;
         /* send */
         case OP_SEND:
