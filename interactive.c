@@ -113,7 +113,7 @@ void interactive_print(CPU *cpu, int t) {
                 BIT(cpu->cr, 1), BIT(cpu->cr, 0));
     } else if (t == PRINT_TARGET_LR) {
         printf("(LR) = 0x%06x\n", cpu->lr);
-    } else if (0 <= t && t <= 32) {
+    } else if (0 <= t && t <= 31) {
         printf("(R%d) = %d\n", t, cpu->gpr[t]);
     } else {
         printf("invalid target\n");
