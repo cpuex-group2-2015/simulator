@@ -69,13 +69,12 @@ void extended_op(CPU *cpu, MEMORY *m, int rx, int ry, int rz, uint16_t xo) {
         case XO_OR:
             cpu->gpr[rx] = cpu->gpr[ry] | cpu->gpr[rz];
             break;
-        /* mtlr, mtctr */
-        case XO_MTSPR:
-            if (rz == 0) {
-                cpu->lr = cpu->gpr[rx];
-            } else {
-                cpu->ctr = cpu->gpr[rx];
-            }
+        /* mtlr */
+        case XO_MTLR:
+            cpu->lr = cpu->gpr[ry];
+            break;
+        case XO_MTCTR:
+            cpu->ctr = cpu->gpr[ry];
             break;
         /* mflr */
         case XO_MFSPR:
@@ -191,13 +190,13 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
             cpu->gpr[rx] = (uint16_t) si | cpu->gpr[ry];
             break;
         case OP_CMPI:
-            a = cpu->gpr[rx];
+            a = cpu->gpr[ry];
             cpu->cr = a < si ? 0x8 : (a > si ? 0x4 : 0x2);
             break;
         /* cmp */
         case OP_CMP:
-            a = cpu->gpr[rx];
-            b = cpu->gpr[ry];
+            a = cpu->gpr[ry];
+            b = cpu->gpr[rz];
             cpu->cr = a < b  ? 0x8 : (a > b  ? 0x4 : 0x2);
             break;
         /* b, bl */

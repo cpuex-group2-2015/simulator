@@ -31,12 +31,11 @@ int disasm_xo(unsigned int ir, char *buf, size_t n) {
             snprintf(buf, n, "or    r%d, r%d, r%d", rx, ry, rz);
             break;
         /* mtlr */
-        case XO_MTSPR:
-            if (rz == 0) {
-                snprintf(buf, n, "mtlr  r%d", rx);
-            } else {
-                snprintf(buf, n, "mtctr r%d", rx);
-            }
+        case XO_MTLR:
+            snprintf(buf, n, "mtlr  r%d", rx);
+            break;
+        case XO_MTCTR:
+            snprintf(buf, n, "mtctr  r%d", rx);
             break;
         /* mflr */
         case XO_MFSPR:
@@ -59,6 +58,7 @@ int disasm(unsigned int ir, char *buf, size_t n) {
     int opcode = OPCODE(ir);
     int rx = DOWNTO(ir, 25, 21);
     int ry = DOWNTO(ir, 20, 16);
+    int rz = DOWNTO(ir, 15, 11);
     uint16_t d = DOWNTO(ir, 15, 0);
     const char *branch_s[] = {
         "bge", "ble", "bne", "bc ", "blt", "bgt", "beq", "bc "
@@ -112,11 +112,11 @@ int disasm(unsigned int ir, char *buf, size_t n) {
             break;
         /* cmpi */
         case OP_CMPI:
-            snprintf(buf, n, "cmpi  r%d, %d", rx, d);
+            snprintf(buf, n, "cmpi  r%d, %d", ry, d);
             break;
         /* cmp */
         case OP_CMP:
-            snprintf(buf, n, "cmp   r%d, r%d", rx, ry);
+            snprintf(buf, n, "cmp   r%d, r%d", ry, rz);
             break;
         /* b */
         case OP_B:
