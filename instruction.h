@@ -24,7 +24,8 @@
 #define XO_ADD      266
 #define XO_AND      28
 #define XO_OR       444
-#define XO_MTSPR    467
+#define XO_MTLR     467
+#define XO_MTCTR    468
 #define XO_MFSPR    339
 #define XO_LFX      599
 #define XO_STFX     663
