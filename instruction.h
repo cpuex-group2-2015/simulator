@@ -16,12 +16,15 @@
 #define OP_BSPR     19
 #define OP_LF       50
 #define OP_STF      52
+#define OP_MFGTF    21
+#define OP_MFFTG    22
 #define OP_SEND      1
 #define OP_RECV      2
 
 #define XO_LDX      23
 #define XO_STX      151
 #define XO_ADD      266
+#define XO_NEG      104
 #define XO_AND      28
 #define XO_OR       444
 #define XO_MTLR     467

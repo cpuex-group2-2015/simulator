@@ -61,6 +61,10 @@ void extended_op(CPU *cpu, MEMORY *m, int rx, int ry, int rz, uint16_t xo) {
         case XO_ADD:
             cpu->gpr[rx] = cpu->gpr[ry] + cpu->gpr[rz];
             break;
+        /* neg */
+        case XO_NEG:
+            cpu->gpr[rx] = - cpu->gpr[ry];
+            break;
         /* and */
         case XO_AND:
             cpu->gpr[rx] = cpu->gpr[ry] & cpu->gpr[rz];
@@ -236,6 +240,12 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
         case OP_STF:
             ea = (ry == 0 ? 0 : cpu->gpr[ry]) + si;
             store_to_sram(&(cpu->fpr[rx]), m, ea, sizeof(FPR));
+            break;
+        case OP_MFGTF:
+            cpu->fpr[rx] = cpu->gpr[ry];
+            break;
+        case OP_MFFTG:
+            cpu->gpr[rx] = cpu->fpr[ry];
             break;
         /* send */
         case OP_SEND:
