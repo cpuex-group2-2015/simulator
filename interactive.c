@@ -34,6 +34,28 @@ char *parse_int10(char *s, int *buf) {
     return s;
 }
 
+char *parse_blank(char *s) {
+    while (s[0] == ' ') s = s + 1;
+    return s;
+}
+
+char *parse_register(char *s, int *buf) {
+    if (s[0] == 'r') {
+        if ('0' <= s[2] && s[2] <= '9') {
+            *buf = (s[1] - '0') * 10 + (s[2] - '0');
+        } else {
+            *buf = (s[1] - '0');
+        }
+    } else if (s[0] == 'i' && s[1] == 'r') {
+        *buf = PRINT_TARGET_IR;
+    } else if (s[0] == 'c' && s[1] == 'r') {
+        *buf = PRINT_TARGET_CR;
+    } else if (s[0] == 'l' && s[1] == 'r') {
+        *buf = PRINT_TARGET_LR;
+    }
+    return s;
+}
+
 int prompt(char *s, PROMPT *p) {
     char c, command[64], *arg;
 
@@ -52,20 +74,9 @@ int prompt(char *s, PROMPT *p) {
         p->c = ICMD_PRINT;
 
         arg = command + 1;
-        while (arg[0] == ' ') arg = arg + 1;
-        if (arg[0] == 'r') {
-            if ('0' <= arg[2] && arg[2] <= '9') {
-                p->target = (arg[1] - '0') * 10 + (arg[2] - '0');
-            } else {
-                p->target = (arg[1] - '0');
-            }
-        } else if (arg[0] == 'i' && arg[1] == 'r') {
-            p->target = PRINT_TARGET_IR;
-        } else if (arg[0] == 'c' && arg[1] == 'r') {
-            p->target = PRINT_TARGET_CR;
-        } else if (arg[0] == 'l' && arg[1] == 'r') {
-            p->target = PRINT_TARGET_LR;
-        }
+
+        arg = parse_blank(arg);
+        arg = parse_register(arg, &p->target);
     }
     else if (c == 's') p->c = ICMD_STEP;
     else if (c == 'r') p->c = ICMD_RUN;
@@ -78,9 +89,8 @@ int prompt(char *s, PROMPT *p) {
 
         if (p->c == ICMD_BPREMOVE) {
             arg = command + 2;
-            while (arg[0] == ' ') arg = arg + 1;
-
-            parse_int10(arg, &p->target);
+            arg = parse_blank(arg);
+            arg = parse_int10(arg, &p->target);
         }
     }
     else if (c == 'l') p->c = ICMD_BPSHOW;
