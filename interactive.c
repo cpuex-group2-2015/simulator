@@ -15,6 +15,7 @@ const char *help_string =
     " b  -- set breakpoint\n"
     " bl -- show breakpoint list\n"
     " br -- remove breakpoint\n"
+    " w  -- watch (print register always)\n"
     " q  -- quit\n"
     " h  -- help\n";
 
@@ -70,8 +71,8 @@ int prompt(char *s, PROMPT *p) {
     }
     c = command[0];
 
-    if (c == 'p') {
-        p->c = ICMD_PRINT;
+    if (c == 'p' || c == 'w') {
+        p->c = c == 'p' ? ICMD_PRINT : ICMD_WATCH;
 
         arg = command + 1;
 
@@ -120,6 +121,27 @@ void interactive_print(CPU *cpu, int t) {
     }
 }
 
+void interactive_watch(CPU *cpu, OPTION *option) {
+    int i;
+
+    for (i = 0; i < 32; i++) {
+        if (BIT(option->gpr_watch_list, i)) {
+            interactive_print(cpu, i);
+        }
+    }
+}
+
+void interactive_watch_add(OPTION *option, int t) {
+    if (t == PRINT_TARGET_IR) {
+    } else if (t == PRINT_TARGET_CR) {
+    } else if (t == PRINT_TARGET_LR) {
+    } else if (0  <= t && t <= 31) {
+        option->gpr_watch_list |= 1 << t;
+    } else {
+        printf("invalid target\n");
+    }
+}
+
 int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
     int cont = 1;
     int res;
@@ -127,6 +149,7 @@ int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
     static PROMPT p;
     BREAKPOINT *bp;
 
+    interactive_watch(cpu, option);
     sprintf(prompt_str, "0x%06x> ", cpu->pc);
     while (cont && (res = prompt(prompt_str, &p))) {
         switch (p.c) {
@@ -153,6 +176,10 @@ int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
             case ICMD_BPREMOVE:
                 printf("remove breakpoint %d\n", p.target);
                 bp = remove_breakpoint(p.target, bp);
+                break;
+            case ICMD_WATCH:
+                printf("watch\n");
+                interactive_watch_add(option, p.target);
                 break;
             case ICMD_QUIT: /* quit */
                 cont = 0; option->mode = MODE_QUIT;

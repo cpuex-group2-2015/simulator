@@ -41,6 +41,8 @@ int main(int argc, char *argv[]) {
     option.interactive = 0;
     option.fp = stdout;
     option.breakpoint = NULL;
+    option.gpr_watch_list = 0;
+    option.fpr_watch_list = 0;
 
     __file = argv[0];
 

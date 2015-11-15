@@ -48,6 +48,8 @@ typedef struct option_t {
     int interactive;
     FILE *fp;
     BREAKPOINT *breakpoint;
+    uint32_t gpr_watch_list;
+    uint32_t fpr_watch_list;
 } OPTION;
 
 void sim_run(CPU *cpu, MEMORY *mem, OPTION *option);
