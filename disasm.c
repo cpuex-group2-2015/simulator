@@ -58,6 +58,43 @@ int disasm_xo(unsigned int ir, char *buf, size_t n) {
     return 0;
 }
 
+int disasm_fp(unsigned int ir, char *buf, size_t n) {
+    int xo = DOWNTO(ir, 10, 1);
+    int rx = DOWNTO(ir, 25, 21);
+    int ry = DOWNTO(ir, 20, 16);
+    int rz = DOWNTO(ir, 15, 11);
+    switch (xo) {
+        case FP_MR:
+            snprintf(buf, n, "fmr   fr%d, fr%d", rx, rz);
+            break;
+        case FP_ADD:
+            snprintf(buf, n, "fadd  fr%d, fr%d, fr%d", rx, ry, rz);
+            break;
+        case FP_SUB:
+            snprintf(buf, n, "fsub  fr%d, fr%d, fr%d", rx, ry, rz);
+            break;
+        case FP_MUL:
+            snprintf(buf, n, "fmul  fr%d, fr%d, fr%d", rx, ry, rz);
+            break;
+        case FP_DIV:
+            snprintf(buf, n, "fdiv  fr%d, fr%d, fr%d", rx, ry, rz);
+            break;
+        case FP_NEG:
+            snprintf(buf, n, "fneg  fr%d, fr%d", rx, rz);
+            break;
+        case FP_ABS:
+            snprintf(buf, n, "fabs  fr%d, fr%d", rx, rz);
+            break;
+        case FP_CMP:
+            snprintf(buf, n, "fcmp  fr%d, fr%d", ry, rz);
+            break;
+        default:
+            strncpy(buf, "unknown", n);
+            return -1;
+    }
+    return 0;
+}
+
 int disasm(unsigned int ir, char *buf, size_t n) {
     int opcode = OPCODE(ir);
     int rx = DOWNTO(ir, 25, 21);
@@ -169,12 +206,18 @@ int disasm(unsigned int ir, char *buf, size_t n) {
             snprintf(buf, n, "recv  r%d", rx);
             break;
         /* halt */
+        /*
         case OP_HALT:
             strncpy(buf, "halt", n);
             break;
+        */
         /* Extended Opcode */
         case OP_XO:
             return disasm_xo(ir, buf, n);
+            break;
+        /* Floating-Point Opcode */
+        case OP_FP:
+            return disasm_fp(ir, buf, n);
             break;
         default:
             strncpy(buf, "unknown", n);

@@ -3,6 +3,7 @@
 
 #define OP_HALT     63
 #define OP_XO       31
+#define OP_FP       63
 #define OP_LD       32
 #define OP_ST       36
 #define OP_ADDI     14
