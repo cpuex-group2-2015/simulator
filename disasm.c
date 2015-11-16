@@ -191,6 +191,22 @@ int disasm(unsigned int ir, char *buf, size_t n) {
                 }
             }
             break;
+	/* lf */
+        case OP_LF:
+            if (d == 0) {
+                snprintf(buf, n, "lf    f%d, r%d", rx, ry);
+            } else {
+                snprintf(buf, n, "lf    f%d, %d(r%d)", rx, d, ry);
+            }
+            break;
+	/* stf */
+        case OP_STF:
+            if (d == 0) {
+                snprintf(buf, n, "stf   f%d, r%d", rx, ry);
+            } else {
+                snprintf(buf, n, "stf   f%d, %d(r%d)", rx, d, ry);
+            }
+            break;
         case OP_MFGTF:
             snprintf(buf, n, "mfgtf  r%d, r%d", rx, ry);
             break;
