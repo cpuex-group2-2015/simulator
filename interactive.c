@@ -9,13 +9,14 @@
 const char *help_string =
     "interactive mode commands\n"
     " p  -- print (ex. p r4 / p ir)\n"
+    " P  -- print always\n"
     " s  -- step into next instruction\n"
     " r  -- run\n"
     " d  -- disassemble current instruction\n"
     " b  -- set breakpoint\n"
     " bl -- show breakpoint list\n"
     " br -- remove breakpoint\n"
-    " w  -- watch (print register always)\n"
+    " w  -- watch (same as 'P')\n"
     " q  -- quit\n"
     " h  -- help\n";
 
@@ -71,7 +72,7 @@ int prompt(char *s, PROMPT *p) {
     }
     c = command[0];
 
-    if (c == 'p' || c == 'w') {
+    if (c == 'p' || c == 'P' || c == 'w') {
         p->c = c == 'p' ? ICMD_PRINT : ICMD_WATCH;
 
         arg = command + 1;
@@ -178,8 +179,9 @@ int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
                 bp = remove_breakpoint(p.target, bp);
                 break;
             case ICMD_WATCH:
-                printf("watch\n");
                 interactive_watch_add(option, p.target);
+                interactive_print(cpu, p.target);
+                break;
                 break;
             case ICMD_QUIT: /* quit */
                 cont = 0; option->mode = MODE_QUIT;
