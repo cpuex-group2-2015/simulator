@@ -42,12 +42,16 @@ char *parse_blank(char *s) {
 }
 
 char *parse_register(char *s, int *buf) {
+    int n;
     if (s[0] == 'r') {
-        if ('0' <= s[2] && s[2] <= '9') {
-            *buf = (s[1] - '0') * 10 + (s[2] - '0');
-        } else {
-            *buf = (s[1] - '0');
+        parse_int10(s + 1, &n);
+        *buf = n;
+    } else if (s[0] == 'f') {
+        if (s[1] == 'r') {
+            s = s + 1;
         }
+        parse_int10(s + 1, &n);
+        *buf = n + 32;
     } else if (s[0] == 'i' && s[1] == 'r') {
         *buf = PRINT_TARGET_IR;
     } else if (s[0] == 'c' && s[1] == 'r') {
@@ -117,6 +121,9 @@ void interactive_print(CPU *cpu, int t) {
         printf("(LR) = 0x%06x\n", cpu->lr);
     } else if (0 <= t && t <= 31) {
         printf("(R%d) = %d (0x%08x)\n", t, cpu->gpr[t], cpu->gpr[t]);
+    } else if (32 <= t && t <= 63) {
+        t = t - 32;
+        printf("(FR%d) = %f (0x%08x)\n", t, ui2f(cpu->fpr[t]), cpu->fpr[t]);
     } else {
         printf("invalid target\n");
     }
@@ -129,6 +136,9 @@ void interactive_watch(CPU *cpu, OPTION *option) {
         if (BIT(option->gpr_watch_list, i)) {
             interactive_print(cpu, i);
         }
+        if (BIT(option->fpr_watch_list, i)) {
+            interactive_print(cpu, i + 32);
+        }
     }
 }
 
@@ -138,6 +148,8 @@ void interactive_watch_add(OPTION *option, int t) {
     } else if (t == PRINT_TARGET_LR) {
     } else if (0  <= t && t <= 31) {
         option->gpr_watch_list |= 1 << t;
+    } else if (32 <= t && t <= 63) {
+        option->fpr_watch_list |= 1 << t;
     } else {
         printf("invalid target\n");
     }
