@@ -147,8 +147,9 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
     opcode = OPCODE(ir);
     nia = cpu->pc + 4;
 
-    /* halt */
-    if (opcode == OP_HALT) {
+    /* halt TODO: change HALT op*/
+    /*if (opcode == OP_HALT) { */
+    if (ir == 0xffffffff) {
         return 0;
     }
 
