@@ -36,10 +36,10 @@ int disasm_xo(unsigned int ir, char *buf, size_t n) {
             break;
         /* mtlr */
         case XO_MTLR:
-            snprintf(buf, n, "mtlr  r%d", rx);
+            snprintf(buf, n, "mtlr  r%d", ry);
             break;
         case XO_MTCTR:
-            snprintf(buf, n, "mtctr  r%d", rx);
+            snprintf(buf, n, "mtctr  r%d", ry);
             break;
         /* mflr */
         case XO_MFSPR:
