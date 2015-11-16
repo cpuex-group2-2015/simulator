@@ -43,6 +43,7 @@ int main(int argc, char *argv[]) {
     option.breakpoint = NULL;
     option.gpr_watch_list = 0;
     option.fpr_watch_list = 0;
+    option.disasm_always = 0;
 
     __file = argv[0];
 

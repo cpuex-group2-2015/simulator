@@ -50,6 +50,7 @@ typedef struct option_t {
     BREAKPOINT *breakpoint;
     uint32_t gpr_watch_list;
     uint32_t fpr_watch_list;
+    int disasm_always;
 } OPTION;
 
 void sim_run(CPU *cpu, MEMORY *mem, OPTION *option);

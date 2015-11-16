@@ -13,6 +13,7 @@ const char *help_string =
     " s  -- step into next instruction\n"
     " r  -- run\n"
     " d  -- disassemble current instruction\n"
+    " D  -- disassemble always\n"
     " b  -- set breakpoint\n"
     " bl -- show breakpoint list\n"
     " br -- remove breakpoint\n"
@@ -87,6 +88,7 @@ int prompt(char *s, PROMPT *p) {
     else if (c == 's') p->c = ICMD_STEP;
     else if (c == 'r') p->c = ICMD_RUN;
     else if (c == 'd') p->c = ICMD_DISASM;
+    else if (c == 'D') p->c = ICMD_DISASM_ALWAYS;
     else if (c == 'b') {
         if      (command[1] == 'l') p->c = ICMD_BPSHOW;
         else if (command[1] == 'r') p->c = ICMD_BPREMOVE;
@@ -163,6 +165,9 @@ int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
     BREAKPOINT *bp;
 
     interactive_watch(cpu, option);
+    if (option->disasm_always) {
+        print_disasm_inst(cpu->pc, -1, 5, m, 1, option->breakpoint);
+    }
     sprintf(prompt_str, "0x%06x> ", cpu->pc);
     while (cont && (res = prompt(prompt_str, &p))) {
         switch (p.c) {
@@ -177,6 +182,10 @@ int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
                 break;
             case ICMD_DISASM:
                 print_disasm_inst(cpu->pc, -1, 5, m, 1, option->breakpoint);
+                break;
+            case ICMD_DISASM_ALWAYS:
+                print_disasm_inst(cpu->pc, -1, 5, m, 1, option->breakpoint);
+                option->disasm_always = 1;
                 break;
             case ICMD_BPSET:
                 bp = set_breakpoint_addr(cpu->pc, option->breakpoint);
