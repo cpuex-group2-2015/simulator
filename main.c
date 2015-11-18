@@ -7,7 +7,7 @@
 #include "disasm.h"
 
 #define BROM_SIZE 4194304
-#define SRAM_SIZE   4194304
+#define SRAM_SIZE 4194304
 
 static char *__file;
 

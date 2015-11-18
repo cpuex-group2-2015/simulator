@@ -37,11 +37,13 @@ void simulate_io(int io, GPR *r, FILE *fp) {
 }
 
 void load_from_sram(void *reg, MEMORY *m, unsigned int addr, size_t size) {
-    memcpy(reg, m->sram + addr, size);
+    for (size_t i = 0; i < size; i++)
+        *((uint8_t*)reg + i) = *(m->sram + addr + size - i - 1);
 }
 
 void store_to_sram(void *reg, MEMORY *m, unsigned int addr, size_t size) {
-    memcpy(m->sram + addr, reg, size);
+    for (size_t i = 0; i < size; i++)
+        *(m->sram + addr + size - i - 1) = (uint8_t)*((uint8_t *)reg + i);
 }
 
 void extended_op(CPU *cpu, MEMORY *m, int rx, int ry, int rz, uint16_t xo) {
@@ -243,6 +245,9 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
         case OP_STF:
             ea = (ry == 0 ? 0 : cpu->gpr[ry]) + si;
             store_to_sram(&(cpu->fpr[rx]), m, ea, sizeof(FPR));
+            break;
+        case OP_FP:
+            fp_op(cpu, rx, ry, rz, DOWNTO(ir, 10, 1));
             break;
         case OP_MFGTF:
             cpu->fpr[rx] = cpu->gpr[ry];
