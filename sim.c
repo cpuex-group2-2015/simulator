@@ -46,6 +46,7 @@ void store_to_sram(void *reg, MEMORY *m, unsigned int addr, size_t size) {
 
 void extended_op(CPU *cpu, MEMORY *m, int rx, int ry, int rz, uint16_t xo) {
     int ea;
+    unsigned int n;
     switch (xo) {
         /* ldx  */
         case XO_LDX:
@@ -100,7 +101,8 @@ void extended_op(CPU *cpu, MEMORY *m, int rx, int ry, int rz, uint16_t xo) {
             break;
         /* sr */
         case XO_SR:
-            cpu->gpr[rx] = cpu->gpr[ry] >> (cpu->gpr[rz] & 0x1f);
+            n = cpu->gpr[rz] & 0x1f;
+            cpu->gpr[rx] = (unsigned int) cpu->gpr[ry] >> (unsigned int) n;
             break;
         default:
             printf("invalid extend-op: %d\n", xo);
