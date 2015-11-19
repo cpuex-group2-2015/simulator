@@ -94,13 +94,23 @@ int main(int argc, char *argv[]) {
         load_init_data_from_file(&mem, init_data_filename, SRAM_SIZE);
     }
 
+    unsigned int count;
+
     if (ir_space_size > 0) {
         mem.ir_space_size = ir_space_size;
         if (disassemble_mode) {
             print_disasm_inst(0, 0, ir_space_size / 4, &mem, 0, NULL);
         } else {
-            printf("loaded %lu byte\n", ir_space_size);
-            sim_run(&cpu, &mem, &option);
+            printf("* loaded %lu byte\n", ir_space_size);
+            count = sim_run(&cpu, &mem, &option);
+
+            putchar('\n');
+            if (option.mode == MODE_QUIT) {
+                printf("* simulation aborted at 0x%06x\n", cpu.pc);
+            } else {
+                printf("* simulation completed at 0x%06x\n", cpu.pc);
+            }
+            printf("* %u instructions executed\n", count);
         }
     }
 

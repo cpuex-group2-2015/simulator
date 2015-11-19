@@ -53,6 +53,6 @@ typedef struct option_t {
     int disasm_always;
 } OPTION;
 
-void sim_run(CPU *cpu, MEMORY *mem, OPTION *option);
+unsigned int sim_run(CPU *cpu, MEMORY *mem, OPTION *option);
 void load_instruction(unsigned int *ir, MEMORY *m, unsigned int pc);
 #endif

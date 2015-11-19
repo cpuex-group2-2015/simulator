@@ -271,7 +271,7 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
 }
 
 
-void sim_run(CPU *cpu, MEMORY *m, OPTION *option) {
+unsigned int sim_run(CPU *cpu, MEMORY *m, OPTION *option) {
     unsigned int c = 0;
     int n;
     initialize_cpu(cpu, m, option);
@@ -299,6 +299,9 @@ void sim_run(CPU *cpu, MEMORY *m, OPTION *option) {
     }
     printf("%u instructions executed\n", c);
     if (option->interactive && option->mode != MODE_QUIT) {
+        printf("simulation stopped\n");
         interactive_prompt(cpu, m, option);
     }
+
+    return c;
 }
