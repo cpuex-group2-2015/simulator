@@ -37,12 +37,14 @@ void simulate_io(int io, GPR *r, FILE *fp) {
 }
 
 void load_from_sram(void *reg, MEMORY *m, unsigned int addr, size_t size) {
-    for (size_t i = 0; i < size; i++)
+    size_t i;
+    for (i = 0; i < size; i++)
         *((uint8_t*)reg + i) = *(m->sram + addr + size - i - 1);
 }
 
 void store_to_sram(void *reg, MEMORY *m, unsigned int addr, size_t size) {
-    for (size_t i = 0; i < size; i++)
+    size_t i;
+    for (i = 0; i < size; i++)
         *(m->sram + addr + size - i - 1) = (uint8_t)*((uint8_t *)reg + i);
 }
 
