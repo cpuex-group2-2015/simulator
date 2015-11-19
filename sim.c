@@ -23,16 +23,10 @@ void initialize_cpu(CPU *cpu, MEMORY *m, OPTION *option) {
 }
 
 void simulate_io(int io, GPR *r, FILE *fp) {
-    char buf[64];
     if (io == 0) { /* send */
         fprintf(fp, "%c", (char) DOWNTO(*r, 7, 0));
     } else { /* read */
-        printf("\nrecv> ");
-        if (fgets(buf, 63, stdin) == NULL) {
-            *r = 0;
-        } else {
-            *r = buf[0];
-        }
+        *r = getchar();
     }
 }
 
