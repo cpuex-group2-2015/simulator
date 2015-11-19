@@ -138,6 +138,8 @@ void interactive_watch(CPU *cpu, OPTION *option) {
         if (BIT(option->gpr_watch_list, i)) {
             interactive_print(cpu, i);
         }
+    }
+    for (i = 0; i < 32; i++) {
         if (BIT(option->fpr_watch_list, i)) {
             interactive_print(cpu, i + 32);
         }
