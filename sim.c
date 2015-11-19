@@ -83,19 +83,20 @@ void extended_op(CPU *cpu, MEMORY *m, int rx, int ry, int rz, uint16_t xo) {
         case XO_MFSPR:
             cpu->gpr[rx] = cpu->lr;
             break;
-        /* ldx  */
+        /* lfx  */
         case XO_LFX:
             ea = (ry == 0 ? 0 : cpu->gpr[ry]) + cpu->gpr[rz];
             load_from_sram(&(cpu->fpr[rx]), m, ea, sizeof(FPR));
             break;
-        /* stx */
+        /* stfx */
         case XO_STFX:
             ea = (ry == 0 ? 0 : cpu->gpr[ry]) + cpu->gpr[rz];
             store_to_sram(&(cpu->fpr[rx]), m, ea, sizeof(FPR));
             break;
         /* sl */
         case XO_SL:
-            cpu->gpr[rx] = cpu->gpr[ry] << (cpu->gpr[rz] & 0x1f);
+            n = cpu->gpr[rz] & 0x1f;
+            cpu->gpr[rx] = (unsigned int) cpu->gpr[ry] << (unsigned int) n;
             break;
         /* sr */
         case XO_SR:
@@ -217,16 +218,15 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
                 cpu->lr = cpu->pc + 4;
             }
             break;
-        /* blr, bctr, bctrl */
-        case OP_BSPR:
-            if (BIT(ir, 22) == 0) {
-                /* blr */
-                nia = cpu->lr;
-            } else {
-                nia = cpu->ctr;
-                if (BIT(ir, 25)) {
-                    cpu->lr = cpu->pc + 4;
-                }
+        /* blr */
+        case OP_BLR:
+            nia = cpu->lr;
+            break;
+        /* bctr, bctrl */
+        case OP_BCTR:
+            nia = cpu->ctr;
+            if (BIT(ir, 25)) {
+                cpu->lr = cpu->pc + 4;
             }
             break;
         /* lf */
