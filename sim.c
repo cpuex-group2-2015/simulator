@@ -294,12 +294,6 @@ unsigned int sim_run(CPU *cpu, MEMORY *m, OPTION *option) {
         }
     }
 
-    if (option->mode == MODE_QUIT) {
-        printf("simulation aborted at 0x%06x\n", cpu->pc);
-    } else {
-        printf("simulation completed at 0x%06x\n", cpu->pc);
-    }
-    printf("%u instructions executed\n", c);
     if (option->interactive && option->mode != MODE_QUIT) {
         printf("simulation stopped\n");
         interactive_prompt(cpu, m, option);
