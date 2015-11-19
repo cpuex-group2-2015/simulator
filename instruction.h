@@ -14,7 +14,8 @@
 #define OP_CMP      30
 #define OP_B        18
 #define OP_BC       16
-#define OP_BSPR     19
+#define OP_BLR      19
+#define OP_BCTR     20
 #define OP_LF       50
 #define OP_STF      52
 #define OP_MFGTF    21

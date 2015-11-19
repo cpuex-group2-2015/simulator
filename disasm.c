@@ -45,9 +45,19 @@ int disasm_xo(unsigned int ir, char *buf, size_t n) {
         case XO_MFSPR:
             snprintf(buf, n, "mflr  r%d", rx);
             break;
+        /* lfx */
+        case XO_LFX:
+            snprintf(buf, n, "lfx   fr%d, r%d, r%d", rx, ry, rz);
+            break;
+        /* stfx */
+        case XO_STFX:
+            snprintf(buf, n, "stfx   fr%d, r%d, r%d", rx, ry, rz);
+            break;
+        /* sl */
         case XO_SL:
             snprintf(buf, n, "sl    r%d, r%d, r%d", rx, ry, rz);
             break;
+        /* sr */
         case XO_SR:
             snprintf(buf, n, "sr    r%d, r%d, r%d", rx, ry, rz);
             break;
@@ -179,16 +189,16 @@ int disasm(unsigned int ir, char *buf, size_t n) {
                 snprintf(buf, n, "%s   0x%06x", branch_s[DOWNTO(ir, 24, 22)], (uint16_t) d);
             }
             break;
-        /* blr, bctr, bctrl */
-        case OP_BSPR:
-            if (BIT(ir, 22) == 0) {
-                strncpy(buf, "blr", n);
+        /* blr */
+        case OP_BLR:
+            strncpy(buf, "blr", n);
+            break;
+        /* bctr, bctrl */
+        case OP_BCTR:
+            if (BIT(ir, 25) == 0) {
+                strncpy(buf, "bctr", n);
             } else {
-                if (BIT(ir, 25) == 0) {
-                    strncpy(buf, "bctr", n);
-                } else {
-                    strncpy(buf, "bctrl", n);
-                }
+                strncpy(buf, "bctrl", n);
             }
             break;
 	/* lf */
