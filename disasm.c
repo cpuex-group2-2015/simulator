@@ -222,11 +222,9 @@ int disasm(unsigned int ir, char *buf, size_t n) {
             snprintf(buf, n, "recv  r%d", rx);
             break;
         /* halt */
-        /*
         case OP_HALT:
             strncpy(buf, "halt", n);
             break;
-        */
         /* Extended Opcode */
         case OP_XO:
             return disasm_xo(ir, buf, n);

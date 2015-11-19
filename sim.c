@@ -151,12 +151,6 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
     opcode = OPCODE(ir);
     nia = cpu->pc + 4;
 
-    /* halt TODO: change HALT op*/
-    /*if (opcode == OP_HALT) { */
-    if (ir == 0xffffffff) {
-        return 0;
-    }
-
     /* load and store */
     int rx, ry, rz;
     int16_t si;
@@ -169,6 +163,9 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
     si  = (int16_t) DOWNTO(ir, 15,  0);
 
     switch (opcode) {
+        case OP_HALT:
+            return 0;
+            break;
         /* extended_opcode */
         case OP_XO:
             extended_op(cpu, m, rx, ry, rz, DOWNTO(ir, 10, 1));
