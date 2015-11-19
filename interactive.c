@@ -18,6 +18,7 @@ const char *help_string =
     " bl -- show breakpoint list\n"
     " br -- remove breakpoint\n"
     " w  -- watch (same as 'P')\n"
+    " v  -- view memory data (ex. v r3)\n"
     " q  -- quit\n"
     " h  -- help\n";
 
