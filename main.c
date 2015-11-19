@@ -142,7 +142,7 @@ size_t load_instructions_from_file(MEMORY *mem, char *filename, size_t max_size)
     }
 
     fread(mem->brom, 1, size, fp);
-    memset(mem->brom + size, 0xff, 4);
+    memset(mem->brom + size, 0x00, 4);
 
     fclose(fp);
     return size;
