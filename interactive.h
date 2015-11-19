@@ -16,6 +16,7 @@
 #define ICMD_BPSHOW        7
 #define ICMD_BPREMOVE      8
 #define ICMD_WATCH         9
+#define ICMD_VIEW_REGISTER 10
 #define ICMD_QUIT          125
 #define ICMD_HELP          126
 #define ICMD_INVALID       127

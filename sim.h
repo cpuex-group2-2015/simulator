@@ -55,4 +55,5 @@ typedef struct option_t {
 
 unsigned int sim_run(CPU *cpu, MEMORY *mem, OPTION *option);
 void load_instruction(unsigned int *ir, MEMORY *m, unsigned int pc);
+void load_from_sram(void *reg, MEMORY *m, unsigned int addr, size_t size);
 #endif

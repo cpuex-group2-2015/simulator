@@ -102,6 +102,13 @@ int prompt(char *s, PROMPT *p) {
         }
     }
     else if (c == 'l') p->c = ICMD_BPSHOW;
+    else if (c == 'v') {
+        p->c = ICMD_VIEW_REGISTER;
+        arg = command + 1;
+        arg = parse_blank(arg);
+        arg = parse_register(arg, &p->target);
+
+    }
     else if (c == 'q') p->c = ICMD_QUIT;
     else if (c == 'h') p->c = ICMD_HELP;
     else {
@@ -159,6 +166,20 @@ void interactive_watch_add(OPTION *option, int t) {
     }
 }
 
+void interactive_view_register(CPU *cpu, MEMORY *memory, int t, int n) {
+    unsigned int addr;
+    uint32_t data;
+
+    if (t < 0 || 31 < t) {
+        t = 3;
+    }
+
+    addr = cpu->gpr[t];
+    load_from_sram(&data, memory, addr, sizeof(uint32_t));
+
+    printf("MEM[R%d] = 0x%08x\n", t, data);
+}
+
 int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
     int cont = 1;
     int res;
@@ -205,6 +226,8 @@ int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
                 interactive_watch_add(option, p.target);
                 interactive_print(cpu, p.target);
                 break;
+            case ICMD_VIEW_REGISTER:
+                interactive_view_register(cpu, m, p.target, 16);
                 break;
             case ICMD_QUIT: /* quit */
                 cont = 0; option->mode = MODE_QUIT;
