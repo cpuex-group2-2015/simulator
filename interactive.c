@@ -11,6 +11,7 @@ const char *help_string =
     " p  -- print (ex. p r4 / p ir)\n"
     " P  -- print always\n"
     " s  -- step into next instruction\n"
+    " so -- step over into next instruction\n"
     " r  -- run\n"
     " d  -- disassemble current instruction\n"
     " D  -- disassemble always\n"
@@ -86,7 +87,13 @@ int prompt(char *s, PROMPT *p) {
         arg = parse_blank(arg);
         arg = parse_register(arg, &p->target);
     }
-    else if (c == 's') p->c = ICMD_STEP;
+    else if (c == 's') {
+        if (command[1] == 'o') {
+            p->c = ICMD_STEPOVER;
+        } else {
+            p->c = ICMD_STEP;
+        }
+    }
     else if (c == 'r') p->c = ICMD_RUN;
     else if (c == 'd') p->c = ICMD_DISASM;
     else if (c == 'D') p->c = ICMD_DISASM_ALWAYS;
@@ -203,6 +210,11 @@ int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
                 break;
             case ICMD_STEP: /* step */
                 cont = 0;
+                break;
+            case ICMD_STEPOVER:
+                cont = 0;
+                option->mode = MODE_STEPOVER;
+                option->stepover_addr = cpu->pc + 4;
                 break;
             case ICMD_DISASM:
                 print_disasm_inst(cpu->pc, -1, 5, m, 1, option->breakpoint);

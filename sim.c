@@ -277,6 +277,9 @@ unsigned int sim_run(CPU *cpu, MEMORY *m, OPTION *option) {
             option->mode = MODE_INTERACTIVE;
             printf("stop at breakpoint %d\n", n);
         }
+        if (option->mode == MODE_STEPOVER && cpu->pc == option->stepover_addr) {
+            option->mode = MODE_INTERACTIVE;
+        }
         if (option->mode == MODE_INTERACTIVE) {
             interactive_prompt(cpu, m, option);
         }

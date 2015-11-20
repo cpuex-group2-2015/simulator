@@ -44,6 +44,7 @@ typedef struct option_t {
     uint32_t gpr_watch_list;
     uint32_t fpr_watch_list;
     int disasm_always;
+    unsigned int stepover_addr;
 } OPTION;
 
 unsigned int sim_run(CPU *cpu, MEMORY *mem, OPTION *option);
