@@ -15,7 +15,7 @@ const char *help_string =
     " r  -- run\n"
     " d  -- disassemble current instruction\n"
     " D  -- disassemble always\n"
-    " b  -- set breakpoint\n"
+    " b  -- set breakpoint (b 00a123)\n"
     " bl -- show breakpoint list\n"
     " br -- remove breakpoint\n"
     " w  -- watch (same as 'P')\n"
