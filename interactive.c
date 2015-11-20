@@ -39,6 +39,28 @@ char *parse_int10(char *s, int *buf) {
     return s;
 }
 
+char *parse_int16(char *s, int *buf) {
+    int n = 0;
+
+    if (!(('0' <= *s && *s <= '9') || ('a' <= *s && *s <= 'f'))) {
+        return s;
+    }
+
+    for (;;) {
+        if ('0' <= *s && *s <= '9') {
+            n = n * 16 + (*s - '0');
+        } else if ('a' <= *s && *s <= 'f') {
+            n = n * 16 + (*s - 'a' + 10);
+        } else if (*s != 'x') {
+            break;
+        }
+        s = s + 1;
+    }
+
+    *buf = n;
+    return s;
+}
+
 char *parse_blank(char *s) {
     while (s[0] == ' ') s = s + 1;
     return s;
@@ -101,9 +123,13 @@ int prompt(char *s, PROMPT *p) {
         if      (command[1] == 'l') p->c = ICMD_BPSHOW;
         else if (command[1] == 'r') p->c = ICMD_BPREMOVE;
         else                        p->c = ICMD_BPSET;
-        printf("BREAKPOINT: %d\n", p->c);
 
-        if (p->c == ICMD_BPREMOVE) {
+        if (p->c == ICMD_BPSET) {
+            p->target = -1;
+            arg = command + 2;
+            arg = parse_blank(arg);
+            arg = parse_int16(arg, &p->target);
+        } else if (p->c == ICMD_BPREMOVE) {
             arg = command + 2;
             arg = parse_blank(arg);
             arg = parse_int10(arg, &p->target);
@@ -224,9 +250,13 @@ int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
                 option->disasm_always = 1;
                 break;
             case ICMD_BPSET:
-                bp = set_breakpoint_addr(cpu->pc, option->breakpoint);
+                if (p.target == -1) {
+                    bp = set_breakpoint_addr(cpu->pc, option->breakpoint);
+                } else {
+                    bp = set_breakpoint_addr(p.target, option->breakpoint);
+                }
                 option->breakpoint = bp;
-                printf("set breakpoint %d at 0x%06x\n", bp->n, cpu->pc);
+                printf("set breakpoint %d at 0x%06x\n", bp->n, bp->target.addr);
                 break;
             case ICMD_BPSHOW:
                 print_breakpoint_list(option->breakpoint);
