@@ -25,6 +25,6 @@ $(BUILDDIR)/%.o: %.c
 ./test/%.bin: ./test/%.txt
 	./script/txt2bin.py $< $@
 clean:
-	rm -f $(TARGET) $(OBJS) $(DEPS)
+	rm -f $(TARGET) $(OBJS) $(DEPS) $(TESTBIN)
 
 .PHONY: all clean
