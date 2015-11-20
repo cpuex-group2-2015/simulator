@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include "sim.h"
+#include "interactive.h"
 #include "disasm.h"
 
 #define BROM_SIZE 4194304
