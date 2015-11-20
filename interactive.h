@@ -18,6 +18,7 @@
 #define ICMD_BPREMOVE      9
 #define ICMD_WATCH         10
 #define ICMD_VIEW_REGISTER 11
+#define ICMD_DUMP          12
 #define ICMD_QUIT          125
 #define ICMD_HELP          126
 #define ICMD_INVALID       127
@@ -27,6 +28,8 @@
 typedef struct prompt_t {
     int c;
     int target;
+    int target2;
+    int target3;
 } PROMPT;
 
 int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option);

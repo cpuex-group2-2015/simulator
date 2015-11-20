@@ -20,6 +20,7 @@ const char *help_string =
     " br -- remove breakpoint\n"
     " w  -- watch (same as 'P')\n"
     " v  -- view memory data (ex. v r3)\n"
+    " m  -- dump memory (m [addr] [length])\n"
     " q  -- quit\n"
     " h  -- help\n";
 
@@ -143,6 +144,14 @@ int prompt(char *s, PROMPT *p) {
         arg = parse_register(arg, &p->target);
 
     }
+    else if (c == 'm') {
+        p->c = ICMD_DUMP;
+        arg = command + 1;
+        arg = parse_blank(arg);
+        arg = parse_int10(arg, &p->target);
+        arg = parse_blank(arg);
+        arg = parse_int10(arg, &p->target2);
+    }
     else if (c == 'q') p->c = ICMD_QUIT;
     else if (c == 'h') p->c = ICMD_HELP;
     else {
@@ -214,6 +223,20 @@ void interactive_view_register(CPU *cpu, MEMORY *memory, int t, int n) {
     printf("MEM[R%d] = 0x%08x\n", t, data);
 }
 
+void interactive_dump(MEMORY *m, int s, int n) {
+    uint32_t data;
+    unsigned int i;
+    int e;
+
+    s = s & (~3);
+    e = s + n * 4 - 4;
+
+    for (i = s; i <= e; i = i + 4) {
+        load_from_sram(&data, m, i, sizeof(uint32_t));
+        printf("     0x%06x: %08x\n", i, data);
+    }
+}
+
 int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
     int cont = 1;
     int res;
@@ -271,6 +294,9 @@ int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
                 break;
             case ICMD_VIEW_REGISTER:
                 interactive_view_register(cpu, m, p.target, 16);
+                break;
+            case ICMD_DUMP:
+                interactive_dump(m, p.target, p.target2);
                 break;
             case ICMD_QUIT: /* quit */
                 cont = 0; option->mode = MODE_QUIT;
