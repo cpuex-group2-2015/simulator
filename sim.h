@@ -29,7 +29,7 @@ typedef struct cpu_t {
 } CPU;
 
 typedef struct memory_t {
-    uint8_t *brom;
+    uint32_t *brom;
     uint8_t *sram;
     unsigned int brom_size;
     unsigned int sram_size;
