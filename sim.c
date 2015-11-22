@@ -160,8 +160,15 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
     si  = (int16_t) DOWNTO(ir, 15,  0);
 
     switch (opcode) {
-        case OP_HALT:
-            return 0;
+        case OP_SIM:
+            /* halt */
+            if (si == 0) {
+                return 0;
+            }
+            /* debug */
+            if (si == 1) {
+                option->mode = MODE_INTERACTIVE;
+            }
             break;
         /* extended_opcode */
         case OP_XO:

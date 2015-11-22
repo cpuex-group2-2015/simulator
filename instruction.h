@@ -1,7 +1,7 @@
 #ifndef __INSTURCTION_H
 #define __INSTURCTION_H
 
-#define OP_HALT     0
+#define OP_SIM       0
 #define OP_XO       31
 #define OP_FP       63
 #define OP_LD       32

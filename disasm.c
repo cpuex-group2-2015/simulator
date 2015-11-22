@@ -231,9 +231,15 @@ int disasm(unsigned int ir, char *buf, size_t n) {
         case OP_RECV:
             snprintf(buf, n, "recv  r%d", rx);
             break;
-        /* halt */
-        case OP_HALT:
-            strncpy(buf, "halt", n);
+        /* sim */
+        case OP_SIM:
+            if (d == 0) {
+                strncpy(buf, "halt", n);
+            } else if (d == 1) {
+                strncpy(buf, "debug", n);
+            } else {
+                strncpy(buf, "unknown", n);
+            }
             break;
         /* Extended Opcode */
         case OP_XO:
