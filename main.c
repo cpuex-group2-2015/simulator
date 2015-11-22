@@ -85,6 +85,7 @@ int main(int argc, char *argv[]) {
     CPU cpu;
     MEMORY mem;
     size_t ir_space_size;
+    size_t data_space_size = 0;
 
     mem.brom = malloc(BROM_SIZE);
     mem.brom_size = BROM_SIZE;
@@ -92,7 +93,7 @@ int main(int argc, char *argv[]) {
     mem.sram_size = SRAM_SIZE;
     ir_space_size = load_instructions_from_file(&mem, filename, BROM_SIZE);
     if (init_data_filename != NULL) {
-        load_init_data_from_file(&mem, init_data_filename, SRAM_SIZE);
+        data_space_size = load_init_data_from_file(&mem, init_data_filename, SRAM_SIZE);
     }
 
     unsigned int count;
@@ -102,7 +103,10 @@ int main(int argc, char *argv[]) {
         if (disassemble_mode) {
             print_disasm_inst(0, 0, ir_space_size / 4, &mem, 0, NULL);
         } else {
-            printf("* loaded %lu byte\n", ir_space_size);
+            printf("* %lu byte insturctions loaded\n", ir_space_size);
+            if (data_space_size > 0) {
+                printf("* %lu byte initial data loaded\n", data_space_size);
+            }
             count = sim_run(&cpu, &mem, &option);
 
             putchar('\n');
