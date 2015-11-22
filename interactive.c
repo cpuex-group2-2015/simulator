@@ -263,7 +263,7 @@ int interactive_prompt(CPU *cpu, MEMORY *m, OPTION *option) {
             case ICMD_STEPOVER:
                 cont = 0;
                 option->mode = MODE_STEPOVER;
-                option->stepover_addr = cpu->pc + 4;
+                option->stepover_addr = cpu->pc + 1;
                 break;
             case ICMD_DISASM:
                 print_disasm_inst(cpu->pc, -1, 5, m, 1, option->breakpoint);

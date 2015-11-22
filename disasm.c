@@ -253,15 +253,15 @@ int disasm(unsigned int ir, char *buf, size_t n) {
 void print_disasm_inst(unsigned int addr, int before, int after, MEMORY *m, int ex_col, BREAKPOINT *bp) {
     char disasm_str[30];
 
-    unsigned int s = addr + before * 4;
-    unsigned int e = addr + after * 4;
+    unsigned int s = addr + before;
+    unsigned int e = addr + after;
     unsigned int ir;
     unsigned int i;
 
     if (s > addr) s = 0;
-    if (e > m->ir_space_size - 4) e = m->ir_space_size - 4;
+    if (e > m->ir_space_size - 1) e = m->ir_space_size - 1;
 
-    for (i = s; i <= e; i = i + 4) {
+    for (i = s; i <= e; i = i + 1) {
         load_instruction(&ir, m, i);
         disasm(ir, disasm_str, sizeof(disasm_str));
         if (ex_col) {

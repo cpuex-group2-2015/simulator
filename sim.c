@@ -146,7 +146,7 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
 
     ir = cpu->nir;
     opcode = OPCODE(ir);
-    nia = cpu->pc + 4;
+    nia = cpu->pc + 1;
 
     /* load and store */
     int rx, ry, rz;
@@ -206,7 +206,7 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
         case OP_B:
             nia = (uint16_t) si;
             if (BIT(ir, 25)) {
-                cpu->lr = cpu->pc + 4;
+                cpu->lr = cpu->pc + 1;
             }
             break;
         /* bc, bcl */
@@ -215,7 +215,7 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
                 nia = (uint16_t) si;
             }
             if (BIT(ir, 25)) {
-                cpu->lr = cpu->pc + 4;
+                cpu->lr = cpu->pc + 1;
             }
             break;
         /* blr */
@@ -226,7 +226,7 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
         case OP_BCTR:
             nia = cpu->ctr;
             if (BIT(ir, 25)) {
-                cpu->lr = cpu->pc + 4;
+                cpu->lr = cpu->pc + 1;
             }
             break;
         /* lf */
