@@ -137,6 +137,9 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    if (option.fp != stdout && option.fp != NULL) {
+        fclose(option.fp);
+    }
     free(mem.brom);
     free(mem.sram);
     return 0;
