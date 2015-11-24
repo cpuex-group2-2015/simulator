@@ -22,11 +22,11 @@ static const char *logo = "\n"
 "  /_/     \\____/ ____/|__/  /_____/  /_/ |_| /_____/_____/  /____/ /____/      /_/     \\____/   \n\n";
 
 static const char *help_string =
-    "usage: sim [options] file\n"
+    "usage: sim [OPTIONS] FILE.bin\n"
     "options:\n"
     "-i               interactive mode\n"
     "-e <entry_point> set entry_point (default=0)\n"
-    "-d <file_name>   inital data file\n"
+    "-d <file_name>   inital data file (default: FILE.data) \n"
     "-a               disassemble file and exit\n";
 
 int main(int argc, char *argv[]) {
@@ -92,9 +92,19 @@ int main(int argc, char *argv[]) {
     mem.sram = malloc(SRAM_SIZE);
     mem.sram_size = SRAM_SIZE;
     ir_space_size = load_instructions_from_file(&mem, filename, BROM_SIZE);
-    if (init_data_filename != NULL) {
-        data_space_size = load_init_data_from_file(&mem, init_data_filename, SRAM_SIZE);
+
+    if (init_data_filename == NULL) {
+        int filename_len = strlen(filename);
+
+        init_data_filename = malloc(filename_len + 5);
+        strncpy(init_data_filename, filename, filename_len);
+        if (strstr(init_data_filename + filename_len - 4, ".bin")) {
+            strcpy(init_data_filename + filename_len - 4, ".data");
+        } else {
+            strncat(init_data_filename, ".data", filename_len + 5);
+        }
     }
+    data_space_size = load_init_data_from_file(&mem, init_data_filename, SRAM_SIZE);
 
     unsigned int count;
 
