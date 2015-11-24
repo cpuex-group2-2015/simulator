@@ -19,7 +19,7 @@ float ui2f(uint32_t ui) {
     return uif.f;
 }
 
-float f2ui(float f) {
+uint32_t f2ui(float f) {
     union uif {
         uint32_t ui;
         float f;
