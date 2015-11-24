@@ -129,7 +129,8 @@ size_t load_instructions_from_file(MEMORY *mem, char *filename, size_t max_size)
     struct stat st;
 
     if (stat(filename, &st) == -1) {
-        perror(__file);
+        fprintf(stderr, "%s: %s - ", __file, filename);
+        perror("");
         return 0;
     }
 
@@ -158,7 +159,8 @@ size_t load_init_data_from_file(MEMORY *mem, char *filename, size_t max_size) {
     struct stat st;
 
     if (stat(filename, &st) == -1) {
-        perror(__file);
+        fprintf(stderr, "%s: %s - ", __file, filename);
+        perror("");
         return 0;
     }
 
