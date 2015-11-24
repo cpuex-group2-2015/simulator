@@ -27,12 +27,13 @@ static const char *help_string =
     "-i               interactive mode\n"
     "-e <entry_point> set entry_point (default=0)\n"
     "-d <file_name>   inital data file (default: FILE.data) \n"
-    "-a               disassemble file and exit\n";
+    "-a               disassemble file and exit\n"
+    "-o <file_name>   output file (default: stdout)\n";
 
 int main(int argc, char *argv[]) {
     int c;
     int disassemble_mode = 0;
-    const char *optstring = "hie:d:a";
+    const char *optstring = "hie:d:ao:";
     char *filename;
     char *init_data_filename = NULL;
     OPTION option;
@@ -67,6 +68,13 @@ int main(int argc, char *argv[]) {
                 break;
             case 'a':
                 disassemble_mode = 1;
+                break;
+            case 'o':
+                option.fp = fopen(optarg, "wb");
+                if (option.fp == NULL) {
+                    perror(__file);
+                    return -1;
+                }
                 break;
             case '?':
                 return -1;
