@@ -44,6 +44,7 @@
 #define FP_DIV      18
 #define FP_NEG      40
 #define FP_ABS      264
+#define FP_SQRT     22
 #define FP_CMP      0
 
 #endif
