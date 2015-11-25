@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
     }
     data_space_size = load_init_data_from_file(&mem, init_data_filename, SRAM_SIZE);
 
-    unsigned int count;
+    long long unsigned int count;
 
     if (ir_space_size > 0) {
         mem.ir_space_size = ir_space_size;
@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
             } else {
                 printf("* simulation completed at 0x%06x\n", cpu.pc);
             }
-            printf("* %u instructions executed\n", count);
+            printf("* %llu instructions executed\n", count);
         }
     }
 
