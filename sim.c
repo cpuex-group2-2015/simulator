@@ -129,6 +129,9 @@ void fp_op(CPU *cpu, int rx, int ry, int rz, uint16_t xo) {
         case FP_DIV:
             cpu->fpr[rx] = f2ui(fra / frb);
             break;
+        case FP_NEG:
+            cpu->fpr[rx] = f2ui( 0 - frb );
+            break;
         case FP_ABS:
 	    cpu->fpr[rx] = f2ui( fabs(frb) );
             break;
@@ -280,8 +283,8 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
 }
 
 
-unsigned int sim_run(CPU *cpu, MEMORY *m, OPTION *option) {
-    unsigned int c = 0;
+long long unsigned int sim_run(CPU *cpu, MEMORY *m, OPTION *option) {
+    long long unsigned int c = 0;
     int n;
     initialize_cpu(cpu, m, option);
     for(;;) {
