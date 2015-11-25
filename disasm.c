@@ -95,6 +95,9 @@ int disasm_fp(unsigned int ir, char *buf, size_t n) {
         case FP_ABS:
             snprintf(buf, n, "fabs  fr%d, fr%d", rx, rz);
             break;
+        case FP_SQRT:
+            snprintf(buf, n, "fsqrt  fr%d, fr%d", rx, rz);
+            break;
         case FP_CMP:
             snprintf(buf, n, "fcmp  fr%d, fr%d", ry, rz);
             break;
