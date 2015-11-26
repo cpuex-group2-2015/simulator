@@ -1,7 +1,7 @@
 CC = gcc
 LD = gcc
 CFLAGS = -Wall -MMD -MP
-LDFLAGS =
+LDFLAGS = -lm
 TARGET = ./bin/sim
 SRCDIR = ./src
 BUILDDIR = ./build
@@ -17,7 +17,7 @@ all: $(TARGET) $(TESTBIN)
 -include $(DEPS)
 
 $(TARGET): $(OBJS)
-	$(LD) $(LDFLAGS) -o $@ $^
+	$(LD) -o $@ $^ $(LDFLAGS)
 
 $(BUILDDIR)/%.o: %.c
 	$(CC) $(CFLAGS) -o $@ -c $<
