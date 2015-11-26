@@ -9,5 +9,6 @@
 #define BIT(l, n) DOWNTO(l, n, n)
 float ui2f(uint32_t ui);
 uint32_t f2ui(float f);
+double get_dtime();
 
 #endif

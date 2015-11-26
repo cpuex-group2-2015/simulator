@@ -115,6 +115,7 @@ int main(int argc, char *argv[]) {
     data_space_size = load_init_data_from_file(&mem, init_data_filename, SRAM_SIZE);
 
     long long unsigned int count;
+    double elapsed_time;
 
     if (ir_space_size > 0) {
         mem.ir_space_size = ir_space_size;
@@ -125,7 +126,9 @@ int main(int argc, char *argv[]) {
             if (data_space_size > 0) {
                 printf("* %lu byte initial data loaded\n", data_space_size);
             }
+            elapsed_time = get_dtime();
             count = sim_run(&cpu, &mem, &option);
+            elapsed_time = get_dtime() - elapsed_time;
 
             putchar('\n');
             if (option.mode == MODE_QUIT) {
@@ -134,6 +137,7 @@ int main(int argc, char *argv[]) {
                 printf("* simulation completed at 0x%06x\n", cpu.pc);
             }
             printf("* %llu instructions executed\n", count);
+            printf("* elapsed time [s]: %f\n", elapsed_time * 10e-3);
         }
     }
 

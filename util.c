@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <sys/time.h>
 #include "util.h"
 
 void print_bin(unsigned int n) {
@@ -27,4 +28,11 @@ uint32_t f2ui(float f) {
 
     uif.f = f;
     return uif.ui;
+}
+
+double get_dtime() {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+
+    return (double)(tv.tv_sec) + (double)(tv.tv_usec) * 10e-6;
 }
