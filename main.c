@@ -136,8 +136,8 @@ int main(int argc, char *argv[]) {
             } else {
                 printf("* simulation completed at 0x%06x\n", cpu.pc);
             }
-            printf("* %llu instructions executed\n", count);
-            printf("* elapsed time [s]: %f\n", elapsed_time * 10e-3);
+            printf("* total executed instructions: %llu\n", count);
+            printf("* elapsed time [s]: %f\n", elapsed_time);
         }
     }
 
