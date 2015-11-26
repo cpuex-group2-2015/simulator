@@ -122,9 +122,9 @@ int main(int argc, char *argv[]) {
         if (disassemble_mode) {
             print_disasm_inst(0, 0, ir_space_size / 4, &mem, 0, NULL);
         } else {
-            printf("* %lu byte insturctions loaded\n", ir_space_size);
+            printf("* loaded instructions [byte]: %lu\n", ir_space_size);
             if (data_space_size > 0) {
-                printf("* %lu byte initial data loaded\n", data_space_size);
+                printf("* loaded initial data [byte]: %lu\n", data_space_size);
             }
             elapsed_time = get_dtime();
             count = sim_run(&cpu, &mem, &option);
