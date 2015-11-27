@@ -133,10 +133,10 @@ void fp_op(CPU *cpu, int rx, int ry, int rz, uint16_t xo) {
             cpu->fpr[rx] = f2ui( 0 - frb );
             break;
         case FP_ABS:
-	    cpu->fpr[rx] = f2ui( fabs(frb) );
+            cpu->fpr[rx] = f2ui( fabs(frb) );
             break;
         case FP_SQRT:
-	    cpu->fpr[rx] = f2ui( sqrt(frb) );
+            cpu->fpr[rx] = f2ui( sqrt(frb) );
             break;
         case FP_CMP:
             if (isnan(fra) || isnan(frb)) cpu->cr = 0x2;
