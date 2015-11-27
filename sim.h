@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include "util.h"
 #include "breakpoint.h"
+#include "stat.h"
 
 #define GPR_LEN 32    /* Number of GPRs */
 #define FPR_LEN 32    /* Number of FPRs */
@@ -45,6 +46,7 @@ typedef struct option_t {
     uint32_t fpr_watch_list;
     int disasm_always;
     unsigned int stepover_addr;
+    STAT *stat;
 } OPTION;
 
 long long unsigned int sim_run(CPU *cpu, MEMORY *mem, OPTION *option);

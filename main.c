@@ -6,6 +6,7 @@
 #include "sim.h"
 #include "interactive.h"
 #include "disasm.h"
+#include "stat.h"
 
 #define BROM_SIZE 4194304
 #define SRAM_SIZE 4194304
@@ -28,12 +29,13 @@ static const char *help_string =
     "-e <entry_point> set entry_point (default=0)\n"
     "-d <file_name>   inital data file (default: FILE.data) \n"
     "-a               disassemble file and exit\n"
-    "-o <file_name>   output file (default: stdout)\n";
+    "-o <file_name>   output file (default: stdout)\n"
+    "-s               output statistics\n";
 
 int main(int argc, char *argv[]) {
     int c;
     int disassemble_mode = 0;
-    const char *optstring = "hie:d:ao:";
+    const char *optstring = "hie:d:ao:s";
     char *filename;
     char *init_data_filename = NULL;
     OPTION option;
@@ -46,6 +48,7 @@ int main(int argc, char *argv[]) {
     option.gpr_watch_list = 0;
     option.fpr_watch_list = 0;
     option.disasm_always = 0;
+    option.stat = NULL;
 
     __file = argv[0];
 
@@ -75,6 +78,9 @@ int main(int argc, char *argv[]) {
                     perror(__file);
                     return -1;
                 }
+                break;
+            case 's':
+                option.stat = stat_init();
                 break;
             case '?':
                 return -1;
@@ -117,8 +123,7 @@ int main(int argc, char *argv[]) {
     long long unsigned int count;
     double elapsed_time;
 
-    if (ir_space_size > 0) {
-        mem.ir_space_size = ir_space_size;
+    if (ir_space_size > 0) { mem.ir_space_size = ir_space_size;
         if (disassemble_mode) {
             print_disasm_inst(0, 0, ir_space_size / 4, &mem, 0, NULL);
         } else {
@@ -146,6 +151,10 @@ int main(int argc, char *argv[]) {
     }
     free(mem.brom);
     free(mem.sram);
+    if (option.stat != NULL) {
+        stat_print(stdout, option.stat);
+        stat_free(option.stat);
+    }
     return 0;
 }
 

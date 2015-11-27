@@ -6,6 +6,7 @@
 #include "instruction.h"
 #include "interactive.h"
 #include "breakpoint.h"
+#include "stat.h"
 
 void load_instruction(unsigned int *ir, MEMORY *m, unsigned int pc) {
     memcpy(ir, m->brom + pc, sizeof(unsigned int));
@@ -151,10 +152,11 @@ void fp_op(CPU *cpu, int rx, int ry, int rz, uint16_t xo) {
 }
 
 int tick(CPU *cpu, MEMORY *m, OPTION *option) {
-    unsigned int ir, opcode, nia;
+    unsigned int ir, opcode, xo, nia;
 
     ir = cpu->nir;
     opcode = OPCODE(ir);
+    xo     = DOWNTO(ir, 10, 1);
     nia = cpu->pc + 4;
 
     /* load and store */
@@ -167,6 +169,10 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
     ry = DOWNTO(ir, 20, 16);
     rz = DOWNTO(ir, 15, 11);
     si  = (int16_t) DOWNTO(ir, 15,  0);
+
+    if (option->stat != NULL) {
+        option->stat = stat_add(option->stat, opcode, xo, NULL);
+    }
 
     switch (opcode) {
         case OP_SIM:
@@ -181,7 +187,7 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
             break;
         /* extended_opcode */
         case OP_XO:
-            extended_op(cpu, m, rx, ry, rz, DOWNTO(ir, 10, 1));
+            extended_op(cpu, m, rx, ry, rz, xo);
             break;
         /* ld */
         case OP_LD:
@@ -256,7 +262,7 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
             store_to_sram(&(cpu->fpr[rx]), m, ea, sizeof(FPR));
             break;
         case OP_FP:
-            fp_op(cpu, rx, ry, rz, DOWNTO(ir, 10, 1));
+            fp_op(cpu, rx, ry, rz, xo);
             break;
         case OP_MFGTF:
             cpu->fpr[rx] = cpu->gpr[ry];
