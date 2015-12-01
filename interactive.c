@@ -199,12 +199,25 @@ void interactive_watch(CPU *cpu, OPTION *option) {
             interactive_print(cpu, i + 32);
         }
     }
+    if (BIT(option->spr_watch_list, 1)) {
+        interactive_print(cpu, PRINT_TARGET_CR);
+    }
+    if (BIT(option->spr_watch_list, 2)) {
+        interactive_print(cpu, PRINT_TARGET_LR);
+    }
+    if (BIT(option->spr_watch_list, 3)) {
+        interactive_print(cpu, PRINT_TARGET_CTR);
+    }
 }
 
 void interactive_watch_add(OPTION *option, int t) {
     if (t == PRINT_TARGET_IR) {
     } else if (t == PRINT_TARGET_CR) {
+        option->spr_watch_list |= 2;
     } else if (t == PRINT_TARGET_LR) {
+        option->spr_watch_list |= 4;
+    } else if (t == PRINT_TARGET_CTR) {
+        option->spr_watch_list |= 8;
     } else if (0  <= t && t <= 31) {
         option->gpr_watch_list |= 1 << t;
     } else if (32 <= t && t <= 63) {

@@ -44,6 +44,7 @@ typedef struct option_t {
     BREAKPOINT *breakpoint;
     uint32_t gpr_watch_list;
     uint32_t fpr_watch_list;
+    uint32_t spr_watch_list;
     int disasm_always;
     unsigned int stepover_addr;
     STAT *stat;
