@@ -27,6 +27,7 @@ const char *help_string =
 #define PRINT_TARGET_IR -1
 #define PRINT_TARGET_CR -2
 #define PRINT_TARGET_LR -3
+#define PRINT_TARGET_CTR -4
 
 char *parse_int10(char *s, int *buf) {
     int n = 0;
@@ -84,6 +85,8 @@ char *parse_register(char *s, int *buf) {
         *buf = PRINT_TARGET_CR;
     } else if (s[0] == 'l' && s[1] == 'r') {
         *buf = PRINT_TARGET_LR;
+    } else if (s[0] == 'c' && s[1] == 't' && s[2] == 'r') {
+        *buf = PRINT_TARGET_CTR;
     }
     return s;
 }
@@ -171,6 +174,8 @@ void interactive_print(CPU *cpu, int t) {
                 BIT(cpu->cr, 1), BIT(cpu->cr, 0));
     } else if (t == PRINT_TARGET_LR) {
         printf("(LR) = 0x%06x\n", cpu->lr);
+    } else if (t == PRINT_TARGET_CTR) {
+        printf("(CTR) = 0x%06x\n", cpu->ctr);
     } else if (0 <= t && t <= 31) {
         printf("(R%d) = %d (0x%08x)\n", t, cpu->gpr[t], cpu->gpr[t]);
     } else if (32 <= t && t <= 63) {
