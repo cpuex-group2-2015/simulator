@@ -115,7 +115,14 @@ int disasm(unsigned int ir, char *buf, size_t n) {
     int rz = DOWNTO(ir, 15, 11);
     uint16_t d = DOWNTO(ir, 15, 0);
     const char *branch_s[] = {
-        "bge", "ble", "bne", "bc ", "blt", "bgt", "beq", "bc "
+        "bc ", /* 000 */
+        "bne", /* 001 */
+        "ble", /* 010 */
+        "bge", /* 011 */
+        "bc ", /* 100 */
+        "beq", /* 101 */
+        "bgt", /* 110 */
+        "blt"  /* 111 */
     };
 
 

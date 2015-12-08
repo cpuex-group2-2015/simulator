@@ -233,7 +233,7 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
             break;
         /* bc, bcl */
         case OP_BC:
-            if (BIT(cpu->cr, 3 - DOWNTO(ir, 23, 22)) == BIT(ir, 24)) {
+            if (BIT(cpu->cr, DOWNTO(ir, 23, 22)) == BIT(ir, 24)) {
                 nia = (uint16_t) si;
             }
             if (BIT(ir, 25)) {
