@@ -7,6 +7,8 @@
 #include "interactive.h"
 #include "breakpoint.h"
 #include "stat.h"
+#include "fpu.h"
+
 
 void load_instruction(unsigned int *ir, MEMORY *m, unsigned int pc) {
     memcpy(ir, m->brom + pc, sizeof(unsigned int));
@@ -110,7 +112,7 @@ void extended_op(CPU *cpu, MEMORY *m, int rx, int ry, int rz, uint16_t xo) {
     }
 }
 
-void fp_op(CPU *cpu, int rx, int ry, int rz, uint16_t xo) {
+void fp_op_x87(CPU *cpu, int rx, int ry, int rz, uint16_t xo) {
     float fra = ui2f(cpu->fpr[ry]);
     float frb = ui2f(cpu->fpr[rz]);
 
@@ -148,6 +150,57 @@ void fp_op(CPU *cpu, int rx, int ry, int rz, uint16_t xo) {
         default:
             printf("invalid floating-point op: %d\n", xo);
             break;
+    }
+}
+
+void fp_op_fpu(CPU *cpu, int rx, int ry, int rz, uint16_t xo) {
+    float fra = ui2f(cpu->fpr[ry]);
+    float frb = ui2f(cpu->fpr[rz]);
+
+    switch (xo) {
+        case FP_MR:
+            cpu->fpr[rx] = cpu->fpr[rz];
+            break;
+        case FP_ADD:
+            cpu->fpr[rx] = fadd(cpu->fpr[ry], cpu->fpr[rz]);
+            break;
+        case FP_SUB:
+            cpu->fpr[rx] = f2ui(fra - frb);
+            break;
+        case FP_MUL:
+            cpu->fpr[rx] = f2ui(fra * frb);
+            break;
+        case FP_DIV:
+            cpu->fpr[rx] = f2ui(fra / frb);
+            break;
+        case FP_NEG:
+            cpu->fpr[rx] = f2ui( 0 - frb );
+            break;
+        case FP_ABS:
+            cpu->fpr[rx] = f2ui( fabs(frb) );
+            break;
+        case FP_SQRT:
+            cpu->fpr[rx] = f2ui( sqrt(frb) );
+            break;
+        case FP_CMP:
+            if (isnan(fra) || isnan(frb)) cpu->cr = 0x2;
+            else if (fra < frb)           cpu->cr = 0x8;
+            else if (fra > frb)           cpu->cr = 0x4;
+            else                          cpu->cr = 0x2;
+            break;
+        default:
+            printf("invalid floating-point op: %d\n", xo);
+            break;
+    }
+}
+
+static void (* fp_op)(CPU *cpu, int rx, int ry, int rz, uint16_t xo) = fp_op_fpu;
+
+void set_fpu_type(int type) {
+    if (type == FPU_X87) {
+        fp_op = fp_op_x87;
+    } else if (type == FPU_SIM) {
+        fp_op = fp_op_fpu;
     }
 }
 
@@ -287,7 +340,6 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
 
     return 1;
 }
-
 
 long long unsigned int sim_run(CPU *cpu, MEMORY *m, OPTION *option) {
     long long unsigned int c = 0;

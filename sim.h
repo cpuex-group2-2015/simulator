@@ -50,7 +50,10 @@ typedef struct option_t {
     STAT *stat;
 } OPTION;
 
+#define FPU_X87 0
+#define FPU_SIM 1
 long long unsigned int sim_run(CPU *cpu, MEMORY *mem, OPTION *option);
 void load_instruction(unsigned int *ir, MEMORY *m, unsigned int pc);
 void load_from_sram(void *reg, MEMORY *m, unsigned int addr, size_t size);
+void set_fpu_type(int type);
 #endif

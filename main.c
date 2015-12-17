@@ -30,12 +30,13 @@ static const char *help_string =
     "-d <file_name>   inital data file (default: FILE.data) \n"
     "-a               disassemble file and exit\n"
     "-o <file_name>   output file (default: stdout)\n"
-    "-s               output statistics\n";
+    "-s               output statistics\n"
+    "-f               use x87 f-p instructions instead of PowerlessPC FPU";
 
 int main(int argc, char *argv[]) {
     int c;
     int disassemble_mode = 0;
-    const char *optstring = "hie:d:ao:s";
+    const char *optstring = "hie:d:ao:sf";
     char *filename;
     char *init_data_filename = NULL;
     OPTION option;
@@ -82,6 +83,10 @@ int main(int argc, char *argv[]) {
                 break;
             case 's':
                 option.stat = stat_init();
+                break;
+            case 'f':
+                printf("* use x87 fpu\n");
+                set_fpu_type(FPU_X87);
                 break;
             case '?':
                 return -1;
