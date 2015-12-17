@@ -94,10 +94,8 @@ uint32_t fadd(uint32_t a, uint32_t b)
             c_m = c_m + 8;
       }
 
-      if(shift == 27) c_e = 0x00;
+      if(shift == 27 || c_e < shift) c_e = 0x00;
       else c_e = c_e - shift;
-
-      if(c_e < 0) c_e = 0x00;
 
       c_m = c_m >> 3;   //guardbitとroundbitの3bitを消してやる
    }
