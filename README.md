@@ -20,7 +20,62 @@ bin/ 以下に生成されます
 test/ 以下にテストファイル(\*.txt)があります。makeすることで同じディレクトリに実行用のバイナリ\*.binが生成されるので、それらをシュミレータで実行することができます。
 テストファイルは0, 1で書かれた命令列です。任意の空白と行中のセミコロン以降は無視されます。
 
+## 実行オプション
+
+```
+  ___  __ \_  __ \_ |     / /__  ____/__  __ \__  /___  ____/_  ___/_  ___/    ___  __ \_  ____/
+  __  /_/ /  / / /_ | /| / /__  __/  __  /_/ /_  / __  __/  _____ \_____ \     __  /_/ /  /
+  _  ____// /_/ /__ |/ |/ / _  /___  _  _, _/_  /___  /___  ____/ /____/ /     _  ____// /___
+  /_/     \____/ ____/|__/  /_____/  /_/ |_| /_____/_____/  /____/ /____/      /_/     \____/
+
+
+usage: sim [OPTIONS] FILE.bin
+options:
+-i               interactive mode
+-e <entry_point> set entry_point (default=0)
+-d <file_name>   inital data file (default: FILE.data)
+-a               disassemble file and exit
+-o <file_name>   output file (default: stdout)
+-s               output statistics
+-f               use x87 f-p instructions instead of PowerlessPC FPU
+```
+
++ -i
+	- 対話モード(後述)
++ -e
+	- エントリポイントの指定
++ -a
+	- ターゲットファイルを逆アセンブルして終了する
++ -o
+	- 出力先ファイルを指定(デフォルトで標準出力に出力されます)
++ -s
+	- 実行された命令をカウントして表示
++ -f
+	- PowerlessPC FPUの代わりにX87の浮動小数点命令を使用する
+
+recvで読み込む入力は標準入力から与えられます。入力をファイルから読み込みたい場合はcatなどで出力してパイプしてください。
+
 ## 対話モード(interactive mode)
+```
+0x000000> h
+interactive mode commands
+ p  -- print (ex. p r4 / p ir)
+ P  -- print always
+ s  -- step into next instruction
+ so -- step over into next instruction
+ r  -- run
+ d  -- disassemble current instruction
+ D  -- disassemble always
+ b  -- set breakpoint (b 00a123)
+ bl -- show breakpoint list
+ br -- remove breakpoint
+ w  -- watch (same as 'P')
+ v  -- view memory data (ex. v r3)
+ m  -- dump memory (m [addr] [length])
+ q  -- quit
+ h  -- help
+
+```
 
 -i オプションをつけることでシミュレータは対話モードになります。
 対話モードで使用できるコマンドは以下です:
