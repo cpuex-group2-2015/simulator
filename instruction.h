@@ -41,7 +41,7 @@
 #define FP_ADD      21
 #define FP_SUB      20
 #define FP_MUL      25
-#define FP_DIV      18
+#define FP_INV      18
 #define FP_NEG      40
 #define FP_ABS      264
 #define FP_SQRT     22

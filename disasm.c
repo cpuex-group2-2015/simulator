@@ -86,8 +86,8 @@ int disasm_fp(unsigned int ir, char *buf, size_t n) {
         case FP_MUL:
             snprintf(buf, n, "fmul  fr%d, fr%d, fr%d", rx, ry, rz);
             break;
-        case FP_DIV:
-            snprintf(buf, n, "fdiv  fr%d, fr%d, fr%d", rx, ry, rz);
+        case FP_INV:
+            snprintf(buf, n, "finv  fr%d, fr%d", rx, rz);
             break;
         case FP_NEG:
             snprintf(buf, n, "fneg  fr%d, fr%d", rx, rz);

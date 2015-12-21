@@ -39,7 +39,7 @@ STAT *stat_init() {
     s = stat_add(s, OP_FP   , FP_ADD  , "fadd");
     s = stat_add(s, OP_FP   , FP_SUB  , "fsub");
     s = stat_add(s, OP_FP   , FP_MUL  , "fmul");
-    s = stat_add(s, OP_FP   , FP_DIV  , "fdiv");
+    s = stat_add(s, OP_FP   , FP_INV  , "finv");
     s = stat_add(s, OP_FP   , FP_NEG  , "fneg");
     s = stat_add(s, OP_FP   , FP_ABS  , "fabs");
     s = stat_add(s, OP_FP   , FP_SQRT , "fsqrt");

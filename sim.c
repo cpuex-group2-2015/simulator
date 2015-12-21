@@ -129,8 +129,8 @@ void fp_op_x87(CPU *cpu, int rx, int ry, int rz, uint16_t xo) {
         case FP_MUL:
             cpu->fpr[rx] = f2ui(fra * frb);
             break;
-        case FP_DIV:
-            cpu->fpr[rx] = f2ui(fra / frb);
+        case FP_INV:
+            cpu->fpr[rx] = f2ui(1.0 / frb);
             break;
         case FP_NEG:
             cpu->fpr[rx] = f2ui( 0 - frb );
@@ -170,8 +170,8 @@ void fp_op_fpu(CPU *cpu, int rx, int ry, int rz, uint16_t xo) {
         case FP_MUL:
             cpu->fpr[rx] = f2ui(fra * frb);
             break;
-        case FP_DIV:
-            cpu->fpr[rx] = f2ui(fra / frb);
+        case FP_INV:
+            cpu->fpr[rx] = f2ui(1.0 / frb);
             break;
         case FP_NEG:
             cpu->fpr[rx] = f2ui( 0 - frb );
