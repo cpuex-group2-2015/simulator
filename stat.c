@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <stdint.h>
 #include "instruction.h"
 #include "stat.h"
 
@@ -98,5 +101,69 @@ void stat_print(FILE *fp, STAT *s) {
         fprintf(fp, "%-6s %llu\n", s->label, s->n);
         stat_print(fp, s->l);
         stat_print(fp, s->r);
+    }
+}
+
+char *stat_get_label_sub(STAT *s, int opcd) {
+    char *res;
+
+    if (s == NULL) {
+        return NULL;
+    }
+    if (s->opcd == opcd) {
+        return s->label;
+    }
+    if ((res = stat_get_label_sub(s->l, opcd)) != NULL) {
+        return res;
+    }
+    if ((res = stat_get_label_sub(s->r, opcd)) != NULL) {
+        return res;
+    }
+    return NULL;
+}
+
+
+char *stat_get_label(STAT *s, int op, int xo) {
+    int opcd;
+
+    if (op == OP_XO || op == OP_FP) {
+        opcd = op << 10 | xo;
+    } else {
+        opcd = op << 10;
+    }
+
+    return stat_get_label_sub(s, opcd);
+}
+
+static FILE *fp_logger;
+
+int stat_logger_init(char *name) {
+    time_t timer;
+    struct tm *t;
+    char *fname;
+    size_t sz;
+
+    timer = time(NULL);
+    t = localtime(&timer);
+    sz = strlen(name) + 32;
+    fname = malloc(sz);
+    snprintf(fname, sz, "%s-%04d%02d%02d_%02d%02d%02d.log",
+        name,
+        t->tm_year + 1900, t->tm_mon + 1, t->tm_mday,
+        t->tm_hour, t->tm_min, t->tm_sec);
+
+    fp_logger = fopen(fname, "w");
+    if (fp_logger == NULL) {
+        return -1;
+    }
+
+    return 0;
+}
+
+void stat_logger_log(STAT *s, int op, int xo, uint32_t a, uint32_t b, uint32_t c) {
+    char *label = stat_get_label(s, op, xo);
+
+    if (fp_logger != NULL) {
+        fprintf(fp_logger, "%s %08x %08x %08x\n", label, a, b, c);
     }
 }

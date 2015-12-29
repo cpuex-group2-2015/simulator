@@ -101,6 +101,11 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "%s: No input file\n", __file);
         return -1;
     }
+    if (option.stat != NULL) {
+        if (stat_logger_init(filename) != 0) {
+            perror("sim");
+        }
+    }
 
     CPU cpu;
     MEMORY mem;

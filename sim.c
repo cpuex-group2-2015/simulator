@@ -316,6 +316,9 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
             break;
         case OP_FP:
             fp_op(cpu, rx, ry, rz, xo);
+            if (option->stat != NULL && xo != FP_CMP) {
+                stat_logger_log(option->stat, opcode, xo, cpu->fpr[rx], cpu->fpr[ry], cpu->fpr[rz]);
+            }
             break;
         case OP_MFGTF:
             cpu->fpr[rx] = cpu->gpr[ry];

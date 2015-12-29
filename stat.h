@@ -14,4 +14,6 @@ STAT *stat_init();
 STAT *stat_add(STAT *s, int opcd, int xo, char *label);
 void stat_free(STAT *s);
 void stat_print(FILE *fp, STAT *s);
+int stat_logger_init(char *name);
+void stat_logger_log(STAT *s, int op, int xo, uint32_t a, uint32_t b, uint32_t c);
 #endif
