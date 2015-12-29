@@ -214,6 +214,7 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
 
     /* load and store */
     int rx, ry, rz;
+    uint32_t va, vb, vc;
     int16_t si;
     int ea;
     GPR a, b;
@@ -315,9 +316,12 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
             store_to_sram(&(cpu->fpr[rx]), m, ea, sizeof(FPR));
             break;
         case OP_FP:
+            vb = cpu->fpr[ry];
+            vc = cpu->fpr[rz];
             fp_op(cpu, rx, ry, rz, xo);
+            va = cpu->fpr[rx];
             if (option->stat != NULL && xo != FP_CMP) {
-                stat_logger_log(option->stat, opcode, xo, cpu->fpr[rx], cpu->fpr[ry], cpu->fpr[rz]);
+                stat_logger_log(option->stat, opcode, xo, va, vb, vc);
             }
             break;
         case OP_MFGTF:
