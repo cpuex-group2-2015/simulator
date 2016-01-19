@@ -167,3 +167,15 @@ void stat_logger_log(STAT *s, int op, int xo, uint32_t a, uint32_t b, uint32_t c
         fprintf(fp_logger, "%s %08x %08x %08x\n", label, a, b, c);
     }
 }
+
+/* for CMP, FCMP */
+void stat_logger_log_cmp(STAT *s, int op, int xo, uint32_t a, uint32_t b, uint32_t cr) {
+    char *label = stat_get_label(s, op, xo);
+    char s_cr[5];
+
+    sprintf(s_cr, "%d%d%d%d", (cr&8)>0, (cr&4)>0, (cr&2)>0, (cr&1)>0);
+
+    if (fp_logger != NULL) {
+        fprintf(fp_logger, "%s %s %08x %08x\n", label, s_cr, a, b);
+    }
+}
