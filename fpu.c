@@ -149,21 +149,21 @@ uint32_t finv(uint32_t a) {
     a1 = DOWNTO(a, 10, 0);
 
     uint64_t data = finv_table[a0];
-    uint32_t grad = a1 * DOWNTO(data, 12, 0);
+    uint32_t grad = a1 * DOWNTO64(data, 12, 0);
 
     uint32_t e_;
     uint32_t m;
 
+    grad = DOWNTO(grad, 23, 12);
     m = DOWNTO64(data, 35, 13) - grad;
     switch(e) {
         case 253:
         case 254:
         case 255:
-            e_ = 0;
-            m  = 0;
+            e_ = 0; m = 0;
             break;
         case 0:
-            e_ = 256;
+            e_ = 255; m = 0;
             break;
         default:
             e_ = 253 - e;
