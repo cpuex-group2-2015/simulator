@@ -23,6 +23,7 @@ void initialize_cpu(CPU *cpu, MEMORY *m, OPTION *option) {
     memset(cpu->fpr, 0, sizeof(GPR) * GPR_LEN);
     cpu->pc  = option->entry_point;
     load_instruction(&(cpu->nir), m, cpu->pc);
+    finv_init();
 }
 
 void simulate_io(int io, GPR *r, FILE *fp) {
@@ -171,7 +172,8 @@ void fp_op_fpu(CPU *cpu, int rx, int ry, int rz, uint16_t xo) {
             cpu->fpr[rx] = f2ui(fra * frb);
             break;
         case FP_INV:
-            cpu->fpr[rx] = f2ui(1.0 / frb);
+            /* cpu->fpr[rx] = f2ui(1.0 / frb); */
+            cpu->fpr[rx] = finv(cpu->fpr[rz]);
             break;
         case FP_NEG:
             cpu->fpr[rx] = f2ui( 0 - frb );

@@ -1,4 +1,8 @@
 #include "fpu.h"
+#include "util.h"
+
+#include <stdio.h>
+#include <inttypes.h>
 
 uint32_t fadd(uint32_t a, uint32_t b)
 {
@@ -112,3 +116,58 @@ uint32_t fadd(uint32_t a, uint32_t b)
    return c;
 }
 
+static uint64_t finv_table[4096];
+static char *finv_table_raw[] = {
+#include "finv-table.txt"
+};
+
+int finv_init() {
+    int i, j;
+    const int N = 36;
+    for (i = 0; i < 4096; i++) {
+        uint64_t n = 0;
+        char *buf = finv_table_raw[i];
+        for (j = 0; j < N; j++) {
+            if (buf[j] == '0' || buf[j] == '1') {
+                n |= ((uint64_t) (buf[j] - '0')) << (N - 1 - j);
+            } else {
+                break;
+            }
+        }
+        finv_table[i] = n;
+    }
+
+    return 0;
+}
+
+uint32_t finv(uint32_t a) {
+    uint32_t s, e, a0, a1;
+
+    s = BIT(a, 31);
+    e = DOWNTO(a, 30, 23);
+    a0 = DOWNTO(a, 22, 11);
+    a1 = DOWNTO(a, 10, 0);
+
+    uint64_t data = finv_table[a0];
+    uint32_t grad = a1 * DOWNTO(data, 12, 0);
+
+    uint32_t e_;
+    uint32_t m;
+
+    m = DOWNTO64(data, 35, 13) - grad;
+    switch(e) {
+        case 253:
+        case 254:
+        case 255:
+            e_ = 0;
+            m  = 0;
+            break;
+        case 0:
+            e_ = 256;
+            break;
+        default:
+            e_ = 253 - e;
+    }
+
+    return (s << 31) | (e_ << 23) | m;
+}
