@@ -1,6 +1,6 @@
 CC = gcc
 LD = gcc
-CFLAGS = -Wall -MMD -MP
+CFLAGS = -Wall -MMD -MP -O3
 LDFLAGS = -lm
 TARGET = ./bin/sim
 SRCDIR = ./src
