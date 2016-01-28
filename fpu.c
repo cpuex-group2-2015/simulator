@@ -141,7 +141,8 @@ int finv_init() {
 }
 
 uint32_t finv(uint32_t a) {
-    uint32_t s, e, a0, a1;
+    uint32_t s, a0, a1;
+    uint8_t e;
 
     s = BIT(a, 31);
     e = DOWNTO(a, 30, 23);
