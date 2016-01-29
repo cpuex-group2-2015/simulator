@@ -169,10 +169,9 @@ void fp_op_fpu(CPU *cpu, int rx, int ry, int rz, uint16_t xo) {
             cpu->fpr[rx] = fadd(cpu->fpr[ry], cpu->fpr[rz] + (1 << 31));
             break;
         case FP_MUL:
-            cpu->fpr[rx] = f2ui(fra * frb);
+            cpu->fpr[rx] = fmul(cpu->fpr[ry], cpu->fpr[rz]);
             break;
         case FP_INV:
-            /* cpu->fpr[rx] = f2ui(1.0 / frb); */
             cpu->fpr[rx] = finv(cpu->fpr[rz]);
             break;
         case FP_NEG:
