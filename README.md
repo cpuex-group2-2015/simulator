@@ -31,12 +31,14 @@ test/ 以下にテストファイル(\*.txt)があります。makeすること�
 
 usage: sim [OPTIONS] FILE.bin
 options:
+
 -i               interactive mode
 -e <entry_point> set entry_point (default=0)
 -d <file_name>   inital data file (default: FILE.data)
 -a               disassemble file and exit
 -o <file_name>   output file (default: stdout)
--s               output statistics
+-s               report statistics
+-l               report f-p instruction log
 -f               use x87 f-p instructions instead of PowerlessPC FPU
 ```
 
@@ -50,6 +52,8 @@ options:
 	- 出力先ファイルを指定(デフォルトで標準出力に出力されます)
 + -s
 	- 実行された命令をカウントして表示
++ -l
+	- 浮動小数点命令のオペランド・計算結果をファイルにログ(ターゲットファイル名 + 日付.log)
 + -f
 	- PowerlessPC FPUの代わりにX87の浮動小数点命令を使用する
 
