@@ -48,6 +48,7 @@ typedef struct option_t {
     int disasm_always;
     unsigned int stepover_addr;
     STAT *stat;
+    int logger_enabled;
 } OPTION;
 
 #define FPU_X87 0

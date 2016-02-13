@@ -320,7 +320,7 @@ int tick(CPU *cpu, MEMORY *m, OPTION *option) {
             vb = cpu->fpr[ry];
             vc = cpu->fpr[rz];
             fp_op(cpu, rx, ry, rz, xo);
-            if (option->stat != NULL) {
+            if (option->logger_enabled) {
                 if (xo != FP_CMP) {
                     va = cpu->fpr[rx];
                     stat_logger_log(option->stat, opcode, xo, va, vb, vc);

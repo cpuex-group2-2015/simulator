@@ -30,13 +30,14 @@ static const char *help_string =
     "-d <file_name>   inital data file (default: FILE.data) \n"
     "-a               disassemble file and exit\n"
     "-o <file_name>   output file (default: stdout)\n"
-    "-s               output statistics\n"
+    "-s               report statistics\n"
+    "-l               report f-p instruction log\n"
     "-f               use x87 f-p instructions instead of PowerlessPC FPU";
 
 int main(int argc, char *argv[]) {
     int c;
     int disassemble_mode = 0;
-    const char *optstring = "hie:d:ao:sf";
+    const char *optstring = "hie:d:ao:slf";
     char *filename;
     char *init_data_filename = NULL;
     OPTION option;
@@ -51,6 +52,7 @@ int main(int argc, char *argv[]) {
     option.spr_watch_list = 0;
     option.disasm_always = 0;
     option.stat = NULL;
+    option.logger_enabled = 0;
 
     __file = argv[0];
 
@@ -84,6 +86,9 @@ int main(int argc, char *argv[]) {
             case 's':
                 option.stat = stat_init();
                 break;
+            case 'l':
+                option.logger_enabled = 1;
+                break;
             case 'f':
                 printf("* use x87 fpu\n");
                 set_fpu_type(FPU_X87);
@@ -101,7 +106,10 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "%s: No input file\n", __file);
         return -1;
     }
-    if (option.stat != NULL) {
+    if (option.logger_enabled) {
+        if (option.stat == NULL) {
+            option.stat = stat_init();
+        }
         if (stat_logger_init(filename) != 0) {
             perror("sim");
         }

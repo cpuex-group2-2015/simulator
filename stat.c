@@ -160,6 +160,12 @@ int stat_logger_init(char *name) {
     return 0;
 }
 
+void stat_logger_close() {
+    if (fp_logger != NULL) {
+        fclose(fp_logger);
+    }
+}
+
 void stat_logger_log(STAT *s, int op, int xo, uint32_t a, uint32_t b, uint32_t c) {
     char *label = stat_get_label(s, op, xo);
 
