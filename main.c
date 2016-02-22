@@ -175,6 +175,8 @@ int main(int argc, char *argv[]) {
             printf("* elapsed time [s]: %f\n", elapsed_time);
             printf("* memory access count: %llu\n", cache.access_count);
             printf("* cache hit count: %llu\n", cache.hit_count);
+            printf("* cache hit rate: %f\n",
+                (double) cache.hit_count / (double) cache.access_count * 100);
         }
     }
 
@@ -183,7 +185,7 @@ int main(int argc, char *argv[]) {
     }
     free(mem.brom);
     free(mem.sram);
-    cache_free(mem.cache);
+    cache_free(&cache);
     if (option.stat != NULL) {
         stat_print(stdout, option.stat);
         stat_free(option.stat);
