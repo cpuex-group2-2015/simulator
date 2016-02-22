@@ -8,6 +8,7 @@
 #include "breakpoint.h"
 #include "stat.h"
 #include "fpu.h"
+#include "cache.h"
 
 
 void load_instruction(unsigned int *ir, MEMORY *m, unsigned int pc) {
@@ -38,6 +39,7 @@ void load_from_sram(void *reg, MEMORY *m, unsigned int addr, size_t size) {
     size_t i;
     for (i = 0; i < size; i++)
         *((uint8_t*)reg + i) = *(m->sram + addr + size - i - 1);
+    cache_access(addr, m->cache);
 }
 
 void store_to_sram(void *reg, MEMORY *m, unsigned int addr, size_t size) {

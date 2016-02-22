@@ -6,6 +6,7 @@
 #include "util.h"
 #include "breakpoint.h"
 #include "stat.h"
+#include "cache.h"
 
 #define GPR_LEN 32    /* Number of GPRs */
 #define FPR_LEN 32    /* Number of FPRs */
@@ -34,6 +35,7 @@ typedef struct memory_t {
     unsigned int brom_size;
     unsigned int sram_size;
     unsigned int ir_space_size;
+    CACHE *cache;
 } MEMORY;
 
 typedef struct option_t {

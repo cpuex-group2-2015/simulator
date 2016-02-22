@@ -7,9 +7,17 @@
 #include "interactive.h"
 #include "disasm.h"
 #include "stat.h"
+#include "cache.h"
 
 #define BROM_SIZE 4194304
 #define SRAM_SIZE 4194304
+
+/* インデックス幅 (2 ^ nでライン数) */
+#define CACHE_INDEX_WIDTH 10
+/* ライン内アドレスの幅 (2 ^ mでラインあたりのデータ数) */
+#define CACHE_IADDR_WIDTH 3
+/* オフセット */
+#define CACHE_OFFSET_WIDTH 2
 
 static char *__file;
 
@@ -117,6 +125,7 @@ int main(int argc, char *argv[]) {
 
     CPU cpu;
     MEMORY mem;
+    CACHE cache;
     size_t ir_space_size;
     size_t data_space_size = 0;
 
@@ -124,6 +133,8 @@ int main(int argc, char *argv[]) {
     mem.brom_size = BROM_SIZE;
     mem.sram = malloc(SRAM_SIZE);
     mem.sram_size = SRAM_SIZE;
+    mem.cache = &cache;
+    cache_init(&cache, CACHE_INDEX_WIDTH, CACHE_IADDR_WIDTH, CACHE_OFFSET_WIDTH);
     ir_space_size = load_instructions_from_file(&mem, filename, BROM_SIZE);
 
     if (init_data_filename == NULL) {
@@ -162,6 +173,8 @@ int main(int argc, char *argv[]) {
             }
             printf("* total executed instructions: %llu\n", count);
             printf("* elapsed time [s]: %f\n", elapsed_time);
+            printf("* memory access count: %llu\n", cache.access_count);
+            printf("* cache hit count: %llu\n", cache.hit_count);
         }
     }
 
@@ -170,6 +183,7 @@ int main(int argc, char *argv[]) {
     }
     free(mem.brom);
     free(mem.sram);
+    cache_free(mem.cache);
     if (option.stat != NULL) {
         stat_print(stdout, option.stat);
         stat_free(option.stat);
