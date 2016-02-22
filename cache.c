@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "cache.h"
 #include "util.h"
 
@@ -18,7 +19,7 @@ void cache_init(CACHE *cache, int index_width, int ila_width, int offset) {
     cache->ila_width = ila_width;
     cache->offset = offset;
     cache->tag_width = 32 - (index_width + ila_width + offset);
-    cache->tag_array = malloc(sizeof(uint32_t) * (1 << index_width));
+    cache->tag_array = calloc(1 << index_width, sizeof(uint32_t));
     cache->access_count = 0;
     cache->hit_count = 0;
 }
@@ -41,10 +42,14 @@ void cache_access(unsigned int addr, CACHE *cache) {
         cached_tag = cached_tag & ~(1 << 31);
         if (tag == cached_tag) {
             cache->hit_count += 1;
+            /*
+            fprintf(stderr, "O");
+            */
             return;
         }
     }
 
     /* miss */
     cache->tag_array[index] = tag | (1 << 31);
+    /* fprintf(stderr, "X"); */
 }
