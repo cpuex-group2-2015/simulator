@@ -46,6 +46,7 @@ void store_to_sram(void *reg, MEMORY *m, unsigned int addr, size_t size) {
     size_t i;
     for (i = 0; i < size; i++)
         *(m->sram + addr + size - i - 1) = (uint8_t)*((uint8_t *)reg + i);
+    cache_access(addr, m->cache);
 }
 
 void extended_op(CPU *cpu, MEMORY *m, int rx, int ry, int rz, uint16_t xo) {
